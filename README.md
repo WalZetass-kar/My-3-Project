@@ -1,59 +1,53 @@
 # 🚀 My-3-Project
 
-![HTML](https://img.shields.io/badge/HTML5-Structure-orange?logo=html5)
-![CSS](https://img.shields.io/badge/CSS3-Style-blue?logo=css3)
-![JavaScript](https://img.shields.io/badge/JavaScript-Logic-yellow?logo=javascript)
-![GitHub repo size](https://img.shields.io/github/repo-size/WalZetass-kar/My-3-Project)
-![GitHub stars](https://img.shields.io/github/stars/WalZetass-kar/My-3-Project?style=social)
-![GitHub forks](https://img.shields.io/github/forks/WalZetass-kar/My-3-Project?style=social)
+![HTML5](https://img.shields.io/badge/HTML5-Markup-E34F26?logo=html5\&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-Styling-1572B6?logo=css3\&logoColor=white)
+![Vanilla JS](https://img.shields.io/badge/JavaScript-Vanilla%20JS-F7DF1E?logo=javascript\&logoColor=black)
 
-Website project sederhana berbasis **HTML, CSS, dan JavaScript** yang berisi beberapa halaman seperti dashboard, portfolio, CV digital, kalkulator cepat, dan halaman sertifikat.
+![Repo Size](https://img.shields.io/github/repo-size/WalZetass-kar/My-3-Project)
+![Last Commit](https://img.shields.io/github/last-commit/WalZetass-kar/My-3-Project)
+![Stars](https://img.shields.io/github/stars/WalZetass-kar/My-3-Project?style=social)
+![Forks](https://img.shields.io/github/forks/WalZetass-kar/My-3-Project?style=social)
 
-Project ini dibuat sebagai latihan pengembangan web dasar dan untuk menampilkan beberapa fitur sederhana berbasis JavaScript.
+Project website sederhana berbasis **HTML5, CSS3, dan Vanilla JavaScript**.
+Repository ini berisi beberapa halaman seperti **dashboard, CV digital, portfolio, kalkulator sederhana, dan halaman sertifikat**.
 
----
-
-# ✨ Fitur
-
-### 📊 Dashboard
-
-Halaman utama yang berfungsi sebagai navigasi ke semua halaman website.
-
-### 👨‍💻 Digital CV
-
-Halaman CV dalam bentuk website yang menampilkan:
-
-* Profil
-* Skill
-* Informasi pribadi
-
-### 🗂 Portfolio
-
-Halaman untuk menampilkan project atau karya yang pernah dibuat.
-
-### 🧮 QuickMath
-
-Kalkulator sederhana berbasis **JavaScript** untuk melakukan perhitungan cepat.
-
-### 🏆 Sertifikat
-
-Halaman untuk menampilkan sertifikat yang dimiliki.
+Project ini dibuat sebagai latihan pengembangan **frontend web dasar tanpa framework**.
 
 ---
 
-# 🛠 Teknologi yang Digunakan
+# ✨ Features
 
-Project ini dibuat menggunakan teknologi dasar web:
+* 📊 **Dashboard**
+  Halaman utama sebagai navigasi ke seluruh halaman website.
 
-* **HTML5**
-* **CSS3**
-* **JavaScript**
+* 👨‍💻 **Digital CV**
+  Menampilkan CV dalam bentuk website.
+
+* 🗂 **Portfolio**
+  Halaman untuk menampilkan project atau karya.
+
+* 🧮 **QuickMath**
+  Kalkulator sederhana menggunakan **Vanilla JavaScript**.
+
+* 🏆 **Sertifikat**
+  Halaman untuk menampilkan sertifikat.
 
 ---
 
-# 📁 Struktur Project
+# 🛠 Tech Stack
 
-```
+Project ini menggunakan teknologi:
+
+* **HTML5** — struktur halaman
+* **CSS3** — styling dan layout
+* **Vanilla JavaScript** — logika interaksi tanpa framework
+
+---
+
+# 📁 Project Structure
+
+```id="5t9a3d"
 My-3-Project
 │
 ├── dashboard.html
@@ -70,11 +64,35 @@ My-3-Project
 
 ---
 
-# 📊 Statistik GitHub
+# ⚡ How to Run
+
+Clone repository:
+
+```id="x2g7re"
+git clone https://github.com/WalZetass-kar/My-3-Project.git
+```
+
+Masuk ke folder project:
+
+```id="0d4f9k"
+cd My-3-Project
+```
+
+Buka di browser:
+
+```id="7c1v2q"
+dashboard.html
+```
+
+Atau jalankan menggunakan **Live Server di VS Code**.
+
+---
+
+# 📊 GitHub Statistics
 
 ![GitHub Stats](https://github-readme-stats.vercel.app/api?username=WalZetass-kar\&show_icons=true\&theme=tokyonight)
 
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=WalZetass-kar\&layout=compact\&theme=tokyonight)
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=WalZetass-kar\&layout=compact\&theme=tokyonight)
 
 ---
 
@@ -90,4 +108,3 @@ https://github.com/WalZetass-kar
 # 📜 License
 
 Project ini dibuat untuk **belajar dan pengembangan pribadi**.
-Silakan digunakan atau dimodifikasi sesuai kebutuhan.
