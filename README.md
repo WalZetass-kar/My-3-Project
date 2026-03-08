@@ -1,20 +1,27 @@
-# My-3-Project
+# 🚀 My-3-Project
+
+![HTML](https://img.shields.io/badge/HTML5-Structure-orange?logo=html5)
+![CSS](https://img.shields.io/badge/CSS3-Style-blue?logo=css3)
+![JavaScript](https://img.shields.io/badge/JavaScript-Logic-yellow?logo=javascript)
+![GitHub repo size](https://img.shields.io/github/repo-size/WalZetass-kar/My-3-Project)
+![GitHub stars](https://img.shields.io/github/stars/WalZetass-kar/My-3-Project?style=social)
+![GitHub forks](https://img.shields.io/github/forks/WalZetass-kar/My-3-Project?style=social)
 
 Website project sederhana berbasis **HTML, CSS, dan JavaScript** yang berisi beberapa halaman seperti dashboard, portfolio, CV digital, kalkulator cepat, dan halaman sertifikat.
 
-Project ini dibuat sebagai latihan pengembangan web dasar dan juga untuk menampilkan beberapa informasi pribadi serta fitur sederhana berbasis JavaScript.
+Project ini dibuat sebagai latihan pengembangan web dasar dan untuk menampilkan beberapa fitur sederhana berbasis JavaScript.
 
 ---
 
-## 🚀 Fitur
+# ✨ Fitur
 
 ### 📊 Dashboard
 
-Halaman utama website yang berfungsi sebagai navigasi ke semua halaman project.
+Halaman utama yang berfungsi sebagai navigasi ke semua halaman website.
 
 ### 👨‍💻 Digital CV
 
-Menampilkan **CV dalam bentuk website** berisi:
+Halaman CV dalam bentuk website yang menampilkan:
 
 * Profil
 * Skill
@@ -22,7 +29,7 @@ Menampilkan **CV dalam bentuk website** berisi:
 
 ### 🗂 Portfolio
 
-Halaman untuk menampilkan **project atau karya yang pernah dibuat**.
+Halaman untuk menampilkan project atau karya yang pernah dibuat.
 
 ### 🧮 QuickMath
 
@@ -30,57 +37,57 @@ Kalkulator sederhana berbasis **JavaScript** untuk melakukan perhitungan cepat.
 
 ### 🏆 Sertifikat
 
-Halaman untuk menampilkan **sertifikat yang dimiliki**.
+Halaman untuk menampilkan sertifikat yang dimiliki.
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+# 🛠 Teknologi yang Digunakan
 
 Project ini dibuat menggunakan teknologi dasar web:
 
-* **HTML5** → Struktur halaman website
-* **CSS3** → Styling dan tampilan website
-* **JavaScript** → Interaksi dan logika fitur
+* **HTML5**
+* **CSS3**
+* **JavaScript**
 
 ---
 
-## 📁 Struktur Project
+# 📁 Struktur Project
 
 ```
 My-3-Project
 │
-├── dashboard.html      # Halaman utama
-├── digitalcv.html      # Halaman CV digital
-├── portofolio.html     # Halaman portfolio
-├── quickmath.html      # Kalkulator sederhana
-├── sertifikat.html     # Halaman sertifikat
+├── dashboard.html
+├── digitalcv.html
+├── portofolio.html
+├── quickmath.html
+├── sertifikat.html
 │
-├── style.css           # File styling
-├── script.js           # File JavaScript
+├── style.css
+├── script.js
 │
-└── README.md           # Dokumentasi project
+└── README.md
 ```
-
-## 🌐 Deploy Website
-
-Project ini bisa di-deploy menggunakan:
-
-* **GitHub Pages**
-* **Netlify**
-* **Vercel**
 
 ---
 
-## 👤 Author
+# 📊 Statistik GitHub
 
-**M. Ihwal Maulana**
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=WalZetass-kar\&show_icons=true\&theme=tokyonight)
+
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=WalZetass-kar\&layout=compact\&theme=tokyonight)
+
+---
+
+# 👨‍💻 Author
+
+**Maulana**
 
 GitHub
 https://github.com/WalZetass-kar
 
 ---
 
-## 📜 License
+# 📜 License
 
 Project ini dibuat untuk **belajar dan pengembangan pribadi**.
 Silakan digunakan atau dimodifikasi sesuai kebutuhan.
