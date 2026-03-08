@@ -64,30 +64,6 @@ My-3-Project
 
 ---
 
-# ⚡ How to Run
-
-Clone repository:
-
-```id="x2g7re"
-git clone https://github.com/WalZetass-kar/My-3-Project.git
-```
-
-Masuk ke folder project:
-
-```id="0d4f9k"
-cd My-3-Project
-```
-
-Buka di browser:
-
-```id="7c1v2q"
-dashboard.html
-```
-
-Atau jalankan menggunakan **Live Server di VS Code**.
-
----
-
 # 📊 GitHub Statistics
 
 ![GitHub Stats](https://github-readme-stats.vercel.app/api?username=WalZetass-kar\&show_icons=true\&theme=tokyonight)
@@ -98,7 +74,7 @@ Atau jalankan menggunakan **Live Server di VS Code**.
 
 # 👨‍💻 Author
 
-**Maulana**
+**M.Ihwal Maulana**
 
 GitHub
 https://github.com/WalZetass-kar
