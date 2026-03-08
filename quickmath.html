@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickMath - Ihwal Maulana</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="light-mode">
+
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="dashboard.html">Ihwal Maulana</a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="digitalcv.html" class="nav-link">Digital CV</a></li>
+                <li><a href="portofolio.html" class="nav-link">Portfolio</a></li>
+                <li><a href="sertifikat.html" class="nav-link">Sertifikat</a></li>
+                <li><a href="quickmath.html" class="nav-link active">QuickMath</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <section id="game" class="section active-section">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-calculator"></i> Game QuickMath</h2>
+            
+            <div class="game-container" id="game-card">
+
+                <div id="start-screen" class="game-screen">
+                    <h1 class="game-title"> QuickMath</h1>
+                    <p class="game-subtitle">Masukkan namamu untuk memulai!</p>
+                    <input type="text" id="player-name-input" class="game-input" placeholder="Nama Pemain" maxlength="20">
+                    <div id="name-error" class="error-message">Nama harus diisi!</div>
+                    <p class="game-info">10 soal, 10 detik per soal.<br>Buktikan kecepatanmu!</p>
+                    <button onclick="validateAndShowLoading()" class="btn-game" id="startButton">Mulai </button>
+                </div>
+
+                <div id="loading-screen" class="game-screen hidden">
+                    <div class="loading-icon">==</div>
+                    <div class="loading-text">LOADING</div>
+                    <div class="player-name" id="loading-player-name"></div>
+                    <div class="loading-dots">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                    <div class="loading-spinner"></div>
+                    <div class="loading-bar-container">
+                        <div class="loading-bar" id="loadingBar"></div>
+                    </div>
+                    <div class="loading-percentage" id="loadingPercentage">0%</div>
+                    <div class="loading-tips">
+                        <div class="loading-tip"> Tips: Jawab secepat mungkin!</div>
+                        <div class="loading-tip"> Waktu hanya 10 detik per soal</div>
+                        <div class="loading-tip"> Fokus dan teliti dalam menjawab</div>
+                    </div>
+                    <small>Mempersiapkan soal-soal seru...</small>
+                </div>
+
+                <div id="play-screen" class="game-screen hidden">
+                    <div class="player-name" id="play-player-name"></div>
+                    <div id="quest-number" class="quest-number">Soal 1 / 10</div>
+                    <div class="timer-bar">
+                        <div id="progress" class="timer-progress"></div>
+                    </div>
+                    <div class="question" id="display-question">0 + 0</div>
+                    <input type="number" id="answer-input" class="game-input answer-input" placeholder="?" autocomplete="off">
+                    <br>
+                    <small class="hint-text">tekan Enter  jawab</small>
+                </div>
+
+                <div id="result-screen" class="game-screen hidden">
+                    <h1 id="result-title" class="result-title"> Selesai!</h1>
+                    <div class="player-name" id="result-player-name"></div>
+                    <div id="result-message" class="result-message"></div>
+                    <div class="score-badge" id="final-score">Skor: 0</div>
+                    <div class="result-container">
+                        <table class="result-table">
+                            <thead>
+                                <tr>
+                                    <th>Soal</th>
+                                    <th>Jawabanmu</th>
+                                    <th>Benar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="result-body"></tbody>
+                        </table>
+                    </div>
+                    <button onclick="showStartScreen()" class="btn-game" id="playAgainButton">Main Lagi </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="confirmModal" class="modal confirm-modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header" style="background: var(--danger);">
+                <h3><i class="fas fa-exclamation-triangle"></i> Konfirmasi</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Apakah Anda yakin?</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button onclick="confirmAction()" class="btn-admin btn-save" style="flex: 0.4; background: var(--danger);">Ya, Hapus</button>
+                <button onclick="closeConfirmModal()" class="btn-admin btn-close" style="flex: 0.4;">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-social">
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p class="footer-text">&copy; 2026 M. Ihwal Maulana - QuickMath</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

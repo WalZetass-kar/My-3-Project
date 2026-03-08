@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Ihwal Maulana</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="light-mode">
+
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="dashboard.html">Ihwal Maulana</a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="digitalcv.html" class="nav-link">Digital CV</a></li>
+                <li><a href="portofolio.html" class="nav-link active">Portfolio</a></li>
+                <li><a href="sertifikat.html" class="nav-link">Sertifikat</a></li>
+                <li><a href="quickmath.html" class="nav-link">QuickMath</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <section id="portfolio" class="section active-section">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-images"></i> Portfolio</h2>
+
+            <div id="portfolioLoginModal" class="modal" style="display: none;">
+                <div class="modal-content" style="max-width: 400px;">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-lock"></i> Portfolio Admin Login</h3>
+                        <span class="close-modal" onclick="closePortfolioLoginModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="login-form">
+                            <div class="form-group">
+                                <label for="portfolioUsername">Username</label>
+                                <input type="text" id="portfolioUsername" class="admin-input" placeholder="Masukkan username">
+                            </div>
+                            <div class="form-group">
+                                <label for="portfolioPassword">Password</label>
+                                <input type="password" id="portfolioPassword" class="admin-input" placeholder="Masukkan password">
+                            </div>
+                            <div id="portfolioLoginError" class="error-message" style="display: none; color: #F56565; margin-top: 10px;">
+                                <i class="fas fa-exclamation-circle"></i> Username atau password salah!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="justify-content: space-between;">
+                        <button onclick="closePortfolioLoginModal()" class="btn-admin btn-close" style="flex: 0.3;">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                        <button onclick="handlePortfolioLogin()" class="btn-admin btn-save" style="flex: 0.3;">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-admin-panel" id="portfolioAdminPanel" style="display: none;">
+                <div class="admin-header">
+                    <h3><i class="fas fa-cog"></i> Portfolio Admin - Upload Kegiatan</h3>
+                    <button onclick="logoutPortfolioAdmin()" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                <p class="admin-note">Gunakan panel ini untuk menambahkan kegiatan/projek portfolio</p>
+                
+                <div class="image-preview-container" id="portfolioImagePreview"></div>
+                
+                <div class="admin-form">
+                    <div class="admin-form-group">
+                        <label for="portfolioCategory">Kategori:</label>
+                        <select id="portfolioCategory" class="admin-select">
+                            <option value="organisasi">Organisasi</option>
+                            <option value="individu">Individu</option>
+                        </select>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="portfolioTitle">Judul Kegiatan:</label>
+                        <input type="text" id="portfolioTitle" class="admin-input" placeholder="Contoh: Panitia Seminar Teknologi">
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="portfolioDescription">Deskripsi:</label>
+                        <textarea id="portfolioDescription" class="admin-input" rows="3" placeholder="Deskripsi kegiatan..."></textarea>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="portfolioImage">Link Gambar (URL):</label>
+                        <input type="url" id="portfolioImage" class="admin-input" placeholder="https://images.unsplash.com/..." onchange="previewPortfolioImage(this.value)">
+                        <small class="input-hint">Bisa link dari Unsplash, Google Photos, atau direct link</small>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="portfolioLink">Link Repository/Projek (Opsional):</label>
+                        <input type="url" id="portfolioLink" class="admin-input" placeholder="https://github.com/...">
+                    </div>
+                    
+                    <div class="admin-buttons">
+                        <button onclick="addPortfolioItem()" class="btn-admin btn-save" id="portfolioSaveBtn">
+                            <i class="fas fa-plus-circle"></i> Tambah Portfolio
+                        </button>
+                        <button onclick="closePortfolioAdminPanel()" class="btn-admin btn-close">
+                            <i class="fas fa-times"></i> Tutup Panel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-admin-toggle-container">
+                <button onclick="openPortfolioLoginModal()" class="btn-portfolio-admin-toggle" id="portfolioAdminLoginBtn">
+                    <i class="fas fa-lock"></i> Portfolio Admin Login
+                </button>
+                <span class="portfolio-admin-hint" id="portfolioAdminStatus">Klik untuk login sebagai admin portfolio</span>
+            </div>
+
+            <div class="portfolio-filters">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="organisasi">Organisasi</button>
+                <button class="filter-btn" data-filter="individu">Individu</button>
+            </div>
+
+            <div class="portfolio-stats" id="portfolioStats"></div>
+
+            <div class="portfolio-grid" id="portfolioGrid"></div>
+
+            <div class="pagination" id="portfolioPagination"></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-social">
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p class="footer-text">&copy; 2026 M. Ihwal Maulana - Portfolio</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

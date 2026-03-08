@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website - Ihwal Maulana</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="light-mode">
+
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="dashboard.html">Ihwal Maulana</a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="digitalcv.html" class="nav-link">Digital CV</a></li>
+                <li><a href="portofolio.html" class="nav-link">Portfolio</a></li>
+                <li><a href="sertifikat.html" class="nav-link">Sertifikat</a></li>
+                <li><a href="quickmath.html" class="nav-link">QuickMath</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <section id="dashboard" class="section active-section">
+        <div class="container">
+            <div class="dashboard-content">
+                <div class="dashboard-text">
+                    <h1 class="dashboard-title">Halo, Saya <span class="gradient-text">M. Ihwal Maulana</span></h1>
+                    <p class="dashboard-subtitle">Mahasiswa Teknik Informatika & Cisco Networking Academy Student</p>
+                    <p class="dashboard-description">Selamat datang di personal website saya. Jelajahi Digital CV, Portfolio, Sertifikat, dan coba kemampuan hitung cepat Anda melalui game QuickMath!</p>
+                    
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-file-alt"></i>
+                            <div class="stat-info">
+                                <h3>Digital CV</h3>
+                                <p>Lihat informasi pribadi, pendidikan, dan skill</p>
+                                <a href="digitalcv.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <i class="fas fa-images"></i>
+                            <div class="stat-info">
+                                <h3>Portfolio</h3>
+                                <p>Jelajahi proyek dan kegiatan</p>
+                                <a href="portofolio.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <i class="fas fa-certificate"></i>
+                            <div class="stat-info">
+                                <h3>Sertifikat</h3>
+                                <p>Lihat sertifikat Cisco, Komdigi, dan Bisa AI</p>
+                                <a href="sertifikat.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <i class="fas fa-calculator"></i>
+                            <div class="stat-info">
+                                <h3>QuickMath</h3>
+                                <p>Uji kecepatan hitungmu</p>
+                                <a href="quickmath.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-image">
+                    <div class="image-wrapper">
+                        <img src="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg" alt="Profile Photo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-social">
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p class="footer-text">&copy; 2026 M. Ihwal Maulana </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

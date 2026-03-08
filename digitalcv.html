@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital CV - Ihwal Maulana</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="light-mode">
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </button>
+
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="dashboard.html">Ihwal Maulana</a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="digitalcv.html" class="nav-link active">Digital CV</a></li>
+                <li><a href="portofolio.html" class="nav-link">Portfolio</a></li>
+                <li><a href="sertifikat.html" class="nav-link">Sertifikat</a></li>
+                <li><a href="quickmath.html" class="nav-link">QuickMath</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <section id="cv" class="section active-section">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-file-alt"></i> Digital CV</h2>
+
+            <div class="cv-card">
+                <div class="cv-header">
+                    <div class="cv-photo">
+                        <img src="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg" alt="Profile">
+                    </div>
+                    <div class="cv-title">
+                        <h3>M. Ihwal Maulana</h3>
+                        <p>Mahasiswa Teknik Informatika</p>
+                        <div class="cv-contact">
+                            <span><i class="fas fa-envelope"></i> ihwalmaulana09@gmail.com</span>
+                            <span><i class="fas fa-phone"></i> 08988098238</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Sei Pinang, Kubu Babussalam, Riau</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <i class="fas fa-calendar-alt" style="color: var(--primary); margin-right: 8px;"></i>
+                            <strong>Tanggal Lahir:</strong> 9 April 2008
+                        </div>
+                        <div>
+                            <i class="fas fa-venus-mars" style="color: var(--primary); margin-right: 8px;"></i>
+                            <strong>Jenis Kelamin:</strong> Laki-laki
+                        </div>
+                        <div>
+                            <i class="fas fa-flag" style="color: var(--primary); margin-right: 8px;"></i>
+                            <strong>Kewarganegaraan:</strong> Indonesia
+                        </div>
+                        <div>
+                            <i class="fas fa-language" style="color: var(--primary); margin-right: 8px;"></i>
+                            <strong>Bahasa:</strong> Indonesia, Inggris
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-grid">
+
+                <div class="cv-card">
+                    <h3 class="card-title"><i class="fas fa-user"></i> Tentang Saya</h3>
+                    <p class="about-text">Mahasiswa Teknik Informatika semester 2 di Politeknik LP3I Pekanbaru dengan IPK 3.4. Memiliki minat besar dalam pengembangan web dan keamanan siber. Sedang menjalani kursus di Cisco Networking Academy.</p>
+                </div>
+
+                <div class="cv-card">
+                    <h3 class="card-title"><i class="fas fa-graduation-cap"></i> Riwayat Pendidikan</h3>
+                    <div class="education-item">
+                        <div class="edu-year">2025 - Sekarang</div>
+                        <div class="edu-detail">
+                            <h4>Politeknik LP3I Pekanbaru</h4>
+                            <p>Teknik Informatika | IPK 3.4/4.0</p>
+                        </div>
+                    </div>
+                    <div class="education-item">
+                        <div class="edu-year">2022 - 2025</div>
+                        <div class="edu-detail">
+                            <h4>SMA N 2 Kubu Babussalam</h4>
+                            <p>Jurusan IPA | Nilai UN 92.5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <h3 class="card-title"><i class="fas fa-users"></i> Pengalaman Organisasi</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <h4 style="color: var(--primary);">Himpunan Mahasiswa Teknik Informatika</h4>
+                        <span style="background: var(--soft-red-100); padding: 3px 10px; border-radius: 15px; font-size: 0.85rem;">2025 - Sekarang</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-weight: 500; margin-bottom: 5px;">Anggota Divisi Pengembangan Teknologi</p>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">Berpartisipasi dalam pengembangan website himpunan dan kegiatan seminar teknologi.</p>
+                </div>
+                
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <h4 style="color: var(--primary);">Panitia Seminar AI 2025</h4>
+                        <span style="background: var(--soft-red-100); padding: 3px 10px; border-radius: 15px; font-size: 0.85rem;">2025</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-weight: 500; margin-bottom: 5px;">Koordinator Acara</p>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">Mengkoordinir jalannya seminar dengan 100+ peserta dan 3 pembicara nasional.</p>
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <h3 class="card-title"><i class="fas fa-code"></i> Skill Teknis</h3>
+                <div class="skills-container">
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>HTML5 & CSS3</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>JavaScript</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Python</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Cybersecurity</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <h3 class="card-title"><i class="fas fa-laptop-code"></i> Software & Tools</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <div style="text-align: center; padding: 15px; background: var(--soft-red-50); border-radius: 10px;">
+                        <i class="fab fa-visual-studio" style="font-size: 2rem; color: var(--primary); margin-bottom: 5px;"></i>
+                        <p style="font-size: 0.9rem;">VS Code</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: var(--soft-red-50); border-radius: 10px;">
+                        <i class="fab fa-git-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 5px;"></i>
+                        <p style="font-size: 0.9rem;">Git & GitHub</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: var(--soft-red-50); border-radius: 10px;">
+                        <i class="fas fa-database" style="font-size: 2rem; color: var(--primary); margin-bottom: 5px;"></i>
+                        <p style="font-size: 0.9rem;">MySQL</p>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: var(--soft-red-50); border-radius: 10px;">
+                        <i class="fab fa-figma" style="font-size: 2rem; color: var(--primary); margin-bottom: 5px;"></i>
+                        <p style="font-size: 0.9rem;">Figma</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <h3 class="card-title"><i class="fas fa-code-branch"></i> Projek Terbaru</h3>
+                
+                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--primary);">Website Personal CV</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 5px 0;">HTML, CSS, JavaScript</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Website portofolio interaktif dengan dark mode dan sistem admin.</p>
+                </div>
+                
+                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border);">
+                    <h4 style="color: var(--primary);">Game QuickMath</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 5px 0;">JavaScript</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Game hitung cepat dengan timer dan score tracking.</p>
+                </div>
+                
+                <div>
+                    <h4 style="color: var(--primary);">UI Design Challenge</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 5px 0;">Figma</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Mendesain tampilan aplikasi mobile modern.</p>
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <h3 class="card-title"><i class="fas fa-certificate"></i> Sertifikat</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background: var(--soft-red-50); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <i class="fas fa-shield-halved" style="color: var(--primary); font-size: 1.5rem; margin-bottom: 8px;"></i>
+                        <h4 style="font-size: 0.95rem; margin-bottom: 5px;">Introduction to Cybersecurity</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.8rem;">Cisco</p>
+                    </div>
+                    
+                    <div style="background: var(--soft-red-50); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <i class="fas fa-network-wired" style="color: var(--primary); font-size: 1.5rem; margin-bottom: 8px;"></i>
+                        <h4 style="font-size: 0.95rem; margin-bottom: 5px;">Network Defense</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.8rem;">Cisco</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; text-align: right;">
+                    <a href="sertifikat.html" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">
+                        Lihat semua sertifikat <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <h3 class="card-title"><i class="fas fa-globe"></i> Kemampuan Bahasa</h3>
+                
+                <div style="display: grid; gap: 15px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Bahasa Indonesia</span>
+                            <span>Aktif</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Bahasa Inggris</span>
+                            <span>Pasif</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <h3 class="card-title"><i class="fas fa-heart"></i> Minat & Hobi</h3>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <span style="background: var(--soft-red-100); padding: 8px 15px; border-radius: 50px; font-size: 0.9rem;">
+                        <i class="fas fa-robot"></i> Artificial Intelligence
+                    </span>
+                    <span style="background: var(--soft-red-100); padding: 8px 15px; border-radius: 50px; font-size: 0.9rem;">
+                        <i class="fas fa-shield-alt"></i> Cybersecurity
+                    </span>
+                    <span style="background: var(--soft-red-100); padding: 8px 15px; border-radius: 50px; font-size: 0.9rem;">
+                        <i class="fas fa-gamepad"></i> Gaming
+                    </span>
+                    <span style="background: var(--soft-red-100); padding: 8px 15px; border-radius: 50px; font-size: 0.9rem;">
+                        <i class="fas fa-book"></i> Membaca
+                    </span>
+                </div>
+            </div>
+
+            <div class="cv-card" style="text-align: center;">
+                <h3 class="card-title"><i class="fas fa-share-alt"></i> Temukan Saya di</h3>
+                
+                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 15px;">
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank" style="color: var(--primary); font-size: 2rem; transition: var(--transition);">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank" style="color: var(--primary); font-size: 2rem; transition: var(--transition);">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank" style="color: var(--primary); font-size: 2rem; transition: var(--transition);">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="mailto:ihwalmaulana09@gmail.com" style="color: var(--primary); font-size: 2rem; transition: var(--transition);">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-social">
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p class="footer-text">&copy; 2026 M. Ihwal Maulana</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
