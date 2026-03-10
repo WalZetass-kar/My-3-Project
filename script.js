@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initBackToTop();
     initMobileMenu();
     
-    // Inisialisasi berdasarkan halaman
     if (window.location.pathname.includes('quickmath.html')) {
         initGame();
     }
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
         initPortfolio();
     }
     
-    // Set active nav link based on current page
     setActiveNavLink();
 });
 
@@ -139,7 +137,6 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// ========== CERTIFICATES FUNCTIONS ==========
 const ADMIN_USERNAME = "WalDevelop";
 const ADMIN_PASSWORD = "kartika";
 let isLoggedIn = false;
@@ -571,7 +568,6 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// ========== PORTFOLIO FUNCTIONS ==========
 const PORTFOLIO_ADMIN_USERNAME = "WalDevelop";
 const PORTFOLIO_ADMIN_PASSWORD = "kartika";
 let isPortfolioLoggedIn = false;
@@ -1098,7 +1094,6 @@ window.updatePortfolioItem = function(id) {
     }
 }
 
-// ========== GAME FUNCTIONS ==========
 let currentQuestion = 0;
 let score = 0;
 let timeLeft = 10;
