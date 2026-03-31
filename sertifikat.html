@@ -78,44 +78,71 @@
 
             <div class="admin-panel" id="adminPanel" style="display: none;">
                 <div class="admin-header">
-                    <h3><i class="fas fa-cog"></i> Admin Panel - Input Link Sertifikat</h3>
+                    <h3><i class="fas fa-cog"></i> Admin Panel - Kelola Sertifikat</h3>
                     <button onclick="logoutAdmin()" class="btn-logout">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
-                <p class="admin-note">Gunakan panel ini untuk menambahkan link sertifikat</p>
-                
-                <div class="image-preview-container" id="certBadgePreview"></div>
+                <p class="admin-note">Gunakan panel ini untuk menambah/edit sertifikat</p>
                 
                 <div class="admin-form">
                     <div class="admin-form-group">
                         <label for="certCategory">Kategori Sertifikat:</label>
                         <select id="certCategory" class="admin-select">
-                            <option value="cisco">Cisco</option>
-                            <option value="komdigi">Komdigi</option>
-                            <option value="bisaai">Bisa AI</option>
+                            <option value="cisco">Cisco Networking Academy</option>
+                            <option value="komdigi">Kementerian Komdigi</option>
+                            <option value="bisaai">Bisa AI Academy</option>
                         </select>
                     </div>
                     
-                    <div class="admin-form-group" id="certSelectGroup">
-                        <label for="certSelect">Pilih Sertifikat:</label>
-                        <select id="certSelect" class="admin-select"></select>
+                    <div class="admin-form-group">
+                        <label for="certTitle">Judul Sertifikat:</label>
+                        <input type="text" id="certTitle" class="admin-input" placeholder="Contoh: Introduction to Cybersecurity" required>
                     </div>
                     
                     <div class="admin-form-group">
-                        <label for="certLink">Link Sertifikat (URL):</label>
+                        <label for="certIssuer">Penerbit:</label>
+                        <input type="text" id="certIssuer" class="admin-input" placeholder="Contoh: Cisco Networking Academy" required>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="certDate">Tanggal Sertifikat:</label>
+                        <input type="date" id="certDate" class="admin-input" required>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="certDescription">Deskripsi (Opsional):</label>
+                        <textarea id="certDescription" class="admin-input" rows="3" placeholder="Deskripsi singkat tentang sertifikat..."></textarea>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="certHours">Jam Belajar (Opsional):</label>
+                        <input type="number" id="certHours" class="admin-input" placeholder="Contoh: 15">
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="certLink">Link Sertifikat (URL Opsional):</label>
                         <input type="url" id="certLink" class="admin-input" placeholder="https://drive.google.com/...">
                         <small class="input-hint">Bisa link Google Drive, Google Photos, atau direct link</small>
                     </div>
                     
                     <div class="admin-form-group">
-                        <label for="certImage">Link Gambar Badge (Opsional):</label>
-                        <input type="url" id="certImage" class="admin-input" placeholder="https://example.com/badge.png">
+                        <label for="certFile">Upload File Sertifikat:</label>
+                        <input type="file" id="certFile" class="admin-input" accept="image/*,.pdf" />
+                        <div id="certFilePreview" class="file-preview-container" style="margin-top: 10px;"></div>
+                        <small class="input-hint">Format: JPG, PNG, PDF (Max 10MB) - File akan tersimpan permanen</small>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label for="badgeFile">Upload Gambar Badge (Opsional):</label>
+                        <input type="file" id="badgeFile" class="admin-input" accept="image/*" />
+                        <div id="certBadgePreview" class="file-preview-container" style="margin-top: 10px;"></div>
+                        <small class="input-hint">Format: JPG, PNG (Max 2MB)</small>
                     </div>
                     
                     <div class="admin-buttons">
                         <button onclick="saveCertificateLink()" class="btn-admin btn-save">
-                            <i class="fas fa-save"></i> Simpan Link
+                            <i class="fas fa-save"></i> Simpan Sertifikat
                         </button>
                         <button onclick="closeAdminPanel()" class="btn-admin btn-close">
                             <i class="fas fa-times"></i> Tutup Panel
@@ -132,7 +159,8 @@
             </div>
 
             <div class="certificate-categories">
-                <button class="category-btn active" data-category="cisco">Cisco</button>
+                <button class="category-btn active" data-category="all">Semua</button>
+                <button class="category-btn" data-category="cisco">Cisco</button>
                 <button class="category-btn" data-category="komdigi">Komdigi</button>
                 <button class="category-btn" data-category="bisaai">Bisa AI</button>
             </div>
