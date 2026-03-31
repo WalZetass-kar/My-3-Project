@@ -137,13 +137,12 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// ==================== SERTIFIKAT MANAGEMENT (DENGAN LOCALSTORAGE) ====================
+// ==================== SERTIFIKAT MANAGEMENT ====================
 let certificatesData = [];
 let currentCertCategory = 'all';
 let editingCertId = null;
 let isLoggedIn = false;
 
-// Inisialisasi sertifikat
 function initCertificates() {
     console.log('initCertificates dipanggil');
     loadCertificates();
@@ -153,14 +152,12 @@ function initCertificates() {
     renderCertificates();
 }
 
-// Load data dari localStorage
 function loadCertificates() {
     const saved = localStorage.getItem('certificatesData');
     if (saved) {
         certificatesData = JSON.parse(saved);
         console.log('Data sertifikat dimuat dari localStorage:', certificatesData.length, 'sertifikat');
     } else {
-        // Data default yang lebih lengkap
         certificatesData = [
             {
                 id: '1',
@@ -233,28 +230,31 @@ function loadCertificates() {
     }
 }
 
-// Simpan ke localStorage
 function saveCertificates() {
     localStorage.setItem('certificatesData', JSON.stringify(certificatesData));
     console.log('Sertifikat disimpan ke localStorage');
 }
 
-// Render semua sertifikat
 function renderCertificates() {
+    console.log('renderCertificates dipanggil');
+    
     const grid = document.getElementById('certificatesGrid');
     const totalSpan = document.getElementById('totalCertificates');
     const hoursSpan = document.getElementById('totalHours');
     
     if (!grid) {
-        console.log('Error: Element certificatesGrid tidak ditemukan!');
+        console.error('ERROR: Element certificatesGrid tidak ditemukan!');
         return;
     }
     
-    console.log('renderCertificates dipanggil, currentCertCategory:', currentCertCategory);
+    console.log('Element certificatesGrid ditemukan');
     
     let filteredCerts = certificatesData;
     if (currentCertCategory !== 'all') {
         filteredCerts = certificatesData.filter(cert => cert.category === currentCertCategory);
+        console.log('Filter kategori:', currentCertCategory, 'menemukan', filteredCerts.length, 'sertifikat');
+    } else {
+        console.log('Menampilkan semua sertifikat:', filteredCerts.length, 'sertifikat');
     }
     
     const totalCertificates = filteredCerts.length;
@@ -263,11 +263,9 @@ function renderCertificates() {
     if (totalSpan) totalSpan.innerText = totalCertificates;
     if (hoursSpan) hoursSpan.innerText = totalHours + '+';
     
-    console.log('Menampilkan', filteredCerts.length, 'sertifikat');
-    
     if (filteredCerts.length === 0) {
         grid.innerHTML = `
-            <div class="empty-certificates" style="grid-column: 1/-1; text-align: center; padding: 60px;">
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px; background: var(--bg-card); border-radius: 20px;">
                 <i class="fas fa-certificate" style="font-size: 4rem; color: var(--primary);"></i>
                 <h3>Belum ada sertifikat</h3>
                 <p>${isLoggedIn ? 'Klik "Admin Panel" untuk menambahkan sertifikat' : 'Login sebagai admin untuk menambahkan sertifikat'}</p>
@@ -277,22 +275,32 @@ function renderCertificates() {
     }
     
     let html = '';
-    filteredCerts.forEach((cert) => {
+    for (let i = 0; i < filteredCerts.length; i++) {
+        const cert = filteredCerts[i];
+        
         let iconClass = 'fa-shield-halved';
         if (cert.category === 'komdigi') iconClass = 'fa-building';
         if (cert.category === 'bisaai') iconClass = 'fa-robot';
         
-        const formattedDate = cert.date ? new Date(cert.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Tanggal tidak tersedia';
+        let formattedDate = 'Tanggal tidak tersedia';
+        if (cert.date) {
+            try {
+                const dateObj = new Date(cert.date);
+                formattedDate = dateObj.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            } catch(e) {
+                formattedDate = cert.date;
+            }
+        }
         
         const badgeHtml = cert.badgeData ? 
-            `<img src="${cert.badgeData}" alt="Badge" class="cert-badge-img" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '';
+            `<img src="${cert.badgeData}" alt="Badge" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-top: 10px;">` : '';
         
         const adminActions = isLoggedIn ? `
-            <div class="cert-item-actions">
-                <button onclick="editCertificate('${cert.id}')" class="btn-edit-portfolio" title="Edit">
+            <div style="position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; z-index: 10;">
+                <button onclick="editCertificate('${cert.id}')" style="background: var(--primary); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button onclick="deleteCertificate('${cert.id}')" class="btn-delete-portfolio" title="Hapus">
+                <button onclick="deleteCertificate('${cert.id}')" style="background: #F56565; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -301,34 +309,32 @@ function renderCertificates() {
         const hasLink = cert.link && cert.link !== '';
         
         html += `
-            <div class="certificate-card" data-id="${cert.id}">
+            <div class="certificate-card" style="background: var(--bg-card); border-radius: 20px; padding: 20px; display: flex; gap: 20px; align-items: center; box-shadow: var(--shadow); border: 1px solid var(--border); position: relative;">
                 ${adminActions}
-                <div class="certificate-icon">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; flex-shrink: 0;">
                     <i class="fas ${iconClass}"></i>
                 </div>
-                <div class="certificate-content">
-                    <h3>${escapeHtml(cert.title)}</h3>
-                    <p class="cert-issuer">${escapeHtml(cert.issuer)}</p>
-                    <span class="cert-year">${formattedDate}</span>
-                    <p class="cert-description" style="font-size: 0.85rem; color: var(--text-secondary); margin: 8px 0;">
-                        ${escapeHtml(cert.description || '')}
-                    </p>
-                    <div class="cert-actions">
-                        <button class="btn-view-cert" onclick="previewCertificate('${cert.id}')">
+                <div style="flex: 1;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 5px; color: var(--text-primary);">${escapeHtml(cert.title)}</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 5px;">${escapeHtml(cert.issuer)}</p>
+                    <span style="display: inline-block; padding: 3px 10px; background: var(--soft-red-100); border-radius: 15px; font-size: 0.8rem; color: var(--primary); margin-bottom: 8px;">${formattedDate}</span>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 8px 0;">${escapeHtml(cert.description || '')}</p>
+                    <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-view-cert" onclick="previewCertificate('${cert.id}')" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 8px 15px; border-radius: 25px; cursor: pointer;">
                             <i class="fas fa-eye"></i> Preview
                         </button>
-                        ${hasLink ? `<a href="${cert.link}" target="_blank" class="cert-link"><i class="fas fa-external-link-alt"></i> Buka Link</a>` : ''}
+                        ${hasLink ? `<a href="${cert.link}" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; color: var(--primary); text-decoration: none; padding: 5px 10px; background: var(--bg-primary); border-radius: 20px;"><i class="fas fa-external-link-alt"></i> Buka Link</a>` : ''}
                     </div>
-                    <div class="cert-badge-container">
+                    <div style="margin-top: 10px;">
                         ${badgeHtml}
                     </div>
                 </div>
             </div>
         `;
-    });
+    }
     
     grid.innerHTML = html;
-    console.log('Sertifikat berhasil dirender');
+    console.log('Sertifikat berhasil dirender, jumlah:', filteredCerts.length);
 }
 
 function escapeHtml(text) {
@@ -338,7 +344,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Preview sertifikat
 window.previewCertificate = function(certId) {
     const cert = certificatesData.find(c => c.id === certId);
     if (!cert) return;
@@ -347,6 +352,11 @@ window.previewCertificate = function(certId) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
     
+    if (!modal) {
+        console.error('Modal tidak ditemukan');
+        return;
+    }
+    
     modalTitle.textContent = cert.title;
     
     let content = '';
@@ -354,10 +364,10 @@ window.previewCertificate = function(certId) {
     if (cert.fileData && cert.fileData !== 'null' && cert.fileData !== '') {
         if (cert.fileType === 'application/pdf') {
             content = `
-                <div class="certificate-viewer">
+                <div>
                     <iframe src="${cert.fileData}" width="100%" height="500px" style="border: none; border-radius: 10px;"></iframe>
                     <p style="margin-top: 20px;">
-                        <a href="${cert.fileData}" download="sertifikat_${cert.id}.pdf" class="btn-view-cert">
+                        <a href="${cert.fileData}" download="sertifikat_${cert.id}.pdf" class="btn-view-cert" style="display: inline-block;">
                             <i class="fas fa-download"></i> Download PDF
                         </a>
                     </p>
@@ -365,10 +375,10 @@ window.previewCertificate = function(certId) {
             `;
         } else if (cert.fileType && cert.fileType.startsWith('image/')) {
             content = `
-                <div class="certificate-viewer">
+                <div>
                     <img src="${cert.fileData}" alt="${cert.title}" style="max-width: 100%; border-radius: 10px;">
                     <p style="margin-top: 20px;">
-                        <a href="${cert.fileData}" download="sertifikat_${cert.id}.jpg" class="btn-view-cert">
+                        <a href="${cert.fileData}" download="sertifikat_${cert.id}.jpg" class="btn-view-cert" style="display: inline-block;">
                             <i class="fas fa-download"></i> Download Gambar
                         </a>
                     </p>
@@ -377,10 +387,10 @@ window.previewCertificate = function(certId) {
         }
     } else if (cert.link && cert.link !== '') {
         content = `
-            <div class="certificate-viewer">
+            <div>
                 <img src="${cert.link}" alt="${cert.title}" style="max-width: 100%; border-radius: 10px;">
                 <p style="margin-top: 20px;">
-                    <a href="${cert.link}" target="_blank" class="btn-view-cert">
+                    <a href="${cert.link}" target="_blank" class="btn-view-cert" style="display: inline-block;">
                         <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
                     </a>
                 </p>
@@ -388,16 +398,11 @@ window.previewCertificate = function(certId) {
         `;
     } else {
         content = `
-            <div class="certificate-placeholder">
-                <i class="fas fa-clock"></i>
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-clock" style="font-size: 4rem; color: var(--primary);"></i>
                 <h4>BELUM ADA FILE</h4>
-                <div style="margin: 30px 0;">
-                    <span style="font-size: 4rem;">📄</span>
-                </div>
-                <p style="font-size: 1.3rem; margin: 20px 0;">${escapeHtml(cert.title)}</p>
-                <p style="font-size: 1rem; color: var(--text-secondary);">${escapeHtml(cert.issuer)}</p>
-                <p style="margin-top: 20px; font-style: italic;">File sertifikat belum diupload</p>
-                ${isLoggedIn ? `<p style="margin-top: 10px;"><button onclick="editCertificate('${cert.id}')" class="btn-view-cert">Upload Sekarang</button></p>` : ''}
+                <p>File sertifikat belum diupload</p>
+                ${isLoggedIn ? `<button onclick="editCertificate('${cert.id}')" class="btn-view-cert" style="margin-top: 15px;">Upload Sekarang</button>` : ''}
             </div>
         `;
     }
@@ -407,7 +412,6 @@ window.previewCertificate = function(certId) {
     document.body.style.overflow = 'hidden';
 }
 
-// Tambah sertifikat baru
 window.addCertificate = function() {
     if (!isLoggedIn) {
         showToast('Anda harus login terlebih dahulu!', 'error');
@@ -466,7 +470,6 @@ window.addCertificate = function() {
         saveCertificates();
         renderCertificates();
         
-        // Reset form
         document.getElementById('certTitle').value = '';
         document.getElementById('certIssuer').value = '';
         document.getElementById('certDate').value = '';
@@ -475,8 +478,10 @@ window.addCertificate = function() {
         document.getElementById('certHours').value = '';
         if (fileInput) fileInput.value = '';
         if (badgeInput) badgeInput.value = '';
-        document.getElementById('certBadgePreview').innerHTML = '';
-        document.getElementById('certFilePreview').innerHTML = '';
+        const badgePreview = document.getElementById('certBadgePreview');
+        const filePreview = document.getElementById('certFilePreview');
+        if (badgePreview) badgePreview.innerHTML = '';
+        if (filePreview) filePreview.innerHTML = '';
         
         showToast('Sertifikat berhasil ditambahkan!', 'success');
         closeAdminPanel();
@@ -486,7 +491,6 @@ window.addCertificate = function() {
     });
 }
 
-// Edit sertifikat
 window.editCertificate = function(certId) {
     if (!isLoggedIn) {
         showToast('Anda harus login terlebih dahulu!', 'error');
@@ -497,21 +501,25 @@ window.editCertificate = function(certId) {
     const cert = certificatesData.find(c => c.id === certId);
     if (!cert) return;
     
-    document.getElementById('certCategory').value = cert.category;
-    document.getElementById('certTitle').value = cert.title;
-    document.getElementById('certIssuer').value = cert.issuer;
-    document.getElementById('certDate').value = cert.date;
-    document.getElementById('certDescription').value = cert.description || '';
-    document.getElementById('certLink').value = cert.link || '';
-    document.getElementById('certHours').value = cert.hours || '';
+    const categorySelect = document.getElementById('certCategory');
+    const titleInput = document.getElementById('certTitle');
+    const issuerInput = document.getElementById('certIssuer');
+    const dateInput = document.getElementById('certDate');
+    const descInput = document.getElementById('certDescription');
+    const linkInput = document.getElementById('certLink');
+    const hoursInput = document.getElementById('certHours');
+    const badgePreview = document.getElementById('certBadgePreview');
     
-    const preview = document.getElementById('certBadgePreview');
-    if (preview) {
-        if (cert.badgeData) {
-            preview.innerHTML = `<img src="${cert.badgeData}" alt="Badge Preview" style="max-width: 100px; border-radius: 5px;">`;
-        } else {
-            preview.innerHTML = '';
-        }
+    if (categorySelect) categorySelect.value = cert.category;
+    if (titleInput) titleInput.value = cert.title;
+    if (issuerInput) issuerInput.value = cert.issuer;
+    if (dateInput) dateInput.value = cert.date;
+    if (descInput) descInput.value = cert.description || '';
+    if (linkInput) linkInput.value = cert.link || '';
+    if (hoursInput) hoursInput.value = cert.hours || '';
+    
+    if (badgePreview && cert.badgeData) {
+        badgePreview.innerHTML = `<img src="${cert.badgeData}" alt="Badge Preview" style="max-width: 100px; border-radius: 5px;">`;
     }
     
     editingCertId = certId;
@@ -525,7 +533,6 @@ window.editCertificate = function(certId) {
     showAdminPanel();
 }
 
-// Update sertifikat
 window.updateCertificate = function(certId) {
     if (!isLoggedIn) return;
     
@@ -578,7 +585,6 @@ window.updateCertificate = function(certId) {
         saveCertificates();
         renderCertificates();
         
-        // Reset form
         document.getElementById('certTitle').value = '';
         document.getElementById('certIssuer').value = '';
         document.getElementById('certDate').value = '';
@@ -587,8 +593,10 @@ window.updateCertificate = function(certId) {
         document.getElementById('certHours').value = '';
         if (fileInput) fileInput.value = '';
         if (badgeInput) badgeInput.value = '';
-        document.getElementById('certBadgePreview').innerHTML = '';
-        document.getElementById('certFilePreview').innerHTML = '';
+        const badgePreview = document.getElementById('certBadgePreview');
+        const filePreview = document.getElementById('certFilePreview');
+        if (badgePreview) badgePreview.innerHTML = '';
+        if (filePreview) filePreview.innerHTML = '';
         
         const saveBtn = document.querySelector('#adminPanel .btn-save');
         if (saveBtn) {
@@ -605,7 +613,6 @@ window.updateCertificate = function(certId) {
     });
 }
 
-// Hapus sertifikat
 window.deleteCertificate = function(certId) {
     if (!isLoggedIn) {
         showToast('Anda harus login terlebih dahulu!', 'error');
@@ -621,7 +628,6 @@ window.deleteCertificate = function(certId) {
     }
 }
 
-// Upload file ke Base64
 function handleFileUpload(file) {
     return new Promise((resolve, reject) => {
         const maxSize = 10 * 1024 * 1024;
@@ -641,7 +647,6 @@ function handleFileUpload(file) {
     });
 }
 
-// Preview file sebelum upload
 window.previewCertFile = function(input) {
     const preview = document.getElementById('certFilePreview');
     if (!preview) return;
@@ -709,7 +714,7 @@ window.saveCertificateLink = function() {
     }
 }
 
-// ==================== ADMIN LOGIN (untuk sertifikat) ====================
+// ==================== ADMIN LOGIN ====================
 const ADMIN_USERNAME = "WalDevelop";
 const ADMIN_PASSWORD = "kartika";
 
@@ -746,9 +751,12 @@ window.openLoginModal = function() {
         if (modal) {
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('loginError').style.display = 'none';
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            if (usernameInput) usernameInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+            const errorElement = document.getElementById('loginError');
+            if (errorElement) errorElement.style.display = 'none';
         }
     }
 }
@@ -775,9 +783,11 @@ window.handleLogin = function() {
         renderCertificates();
         showToast('Login berhasil! Selamat datang Admin.', 'success');
     } else {
-        errorElement.style.display = 'block';
-        document.getElementById('username').style.borderColor = '#F56565';
-        document.getElementById('password').style.borderColor = '#F56565';
+        if (errorElement) errorElement.style.display = 'block';
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        if (usernameInput) usernameInput.style.borderColor = '#F56565';
+        if (passwordInput) passwordInput.style.borderColor = '#F56565';
     }
 }
 
@@ -809,7 +819,7 @@ function updateAdminButton() {
 
 window.downloadCertificate = function() {
     const modalBody = document.getElementById('modalBody');
-    const link = modalBody.querySelector('a');
+    const link = modalBody ? modalBody.querySelector('a') : null;
     if (link && link.href) {
         window.open(link.href, '_blank');
     } else {
@@ -1626,8 +1636,8 @@ function initGame() {
                 let row = document.createElement("tr");
                 let statusClass = data.status === "benar" ? "row-correct" : "row-wrong";
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${data.jawabanUser}</td>
+                     <td>${index + 1}</td>
+                     <td>${data.jawabanUser}</td>
                     <td class="${statusClass}">${data.jawabanBenar}</td>
                 `;
                 tbody.appendChild(row);
@@ -1636,7 +1646,6 @@ function initGame() {
     }
 }
 
-// Global onclick handler untuk modal
 window.onclick = function(event) {
     const certModal = document.getElementById('certModal');
     if (certModal && event.target === certModal) {
