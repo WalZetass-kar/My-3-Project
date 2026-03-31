@@ -137,54 +137,582 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// ==================== SERTIFIKAT MANAGEMENT (DENGAN LOCALSTORAGE) ====================
+let certificatesData = [];
+let currentCertCategory = 'all';
+let editingCertId = null;
+
+// Inisialisasi sertifikat
+function initCertificates() {
+    loadCertificates();
+    initCertificateCategories();
+    initCertificateFileInputs();
+    checkLoginStatus();
+    renderCertificates();
+}
+
+// Load data dari localStorage
+function loadCertificates() {
+    const saved = localStorage.getItem('certificatesData');
+    if (saved) {
+        certificatesData = JSON.parse(saved);
+    } else {
+        // Data default
+        certificatesData = [
+            {
+                id: 'default-1',
+                category: 'cisco',
+                title: 'Introduction to Cybersecurity',
+                issuer: 'Cisco Networking Academy',
+                date: '2026-01-15',
+                description: 'Pengenalan dasar keamanan siber dan praktik terbaik untuk melindungi data dan sistem.',
+                fileData: null,
+                fileType: null,
+                badgeData: null,
+                link: '',
+                hours: 15
+            },
+            {
+                id: 'default-2',
+                category: 'cisco',
+                title: 'Network Defense',
+                issuer: 'Cisco Networking Academy',
+                date: '2026-02-20',
+                description: 'Strategi dan teknik untuk mempertahankan jaringan dari ancaman keamanan.',
+                fileData: null,
+                fileType: null,
+                badgeData: null,
+                link: '',
+                hours: 20
+            },
+            {
+                id: 'default-3',
+                category: 'komdigi',
+                title: 'Digital Talent Scholarship',
+                issuer: 'Kementerian Komdigi',
+                date: '2025-12-10',
+                description: 'Pelatihan talenta digital untuk meningkatkan kompetensi di bidang teknologi.',
+                fileData: null,
+                fileType: null,
+                badgeData: null,
+                link: '',
+                hours: 40
+            },
+            {
+                id: 'default-4',
+                category: 'bisaai',
+                title: 'AI Introduction',
+                issuer: 'Bisa AI Academy',
+                date: '2026-01-05',
+                description: 'Pengenalan dasar kecerdasan buatan dan aplikasinya dalam kehidupan sehari-hari.',
+                fileData: null,
+                fileType: null,
+                badgeData: null,
+                link: '',
+                hours: 10
+            }
+        ];
+        saveCertificates();
+    }
+}
+
+// Simpan ke localStorage
+function saveCertificates() {
+    localStorage.setItem('certificatesData', JSON.stringify(certificatesData));
+}
+
+// Render semua sertifikat
+function renderCertificates() {
+    const grid = document.getElementById('certificatesGrid');
+    const totalSpan = document.getElementById('totalCertificates');
+    const hoursSpan = document.getElementById('totalHours');
+    
+    if (!grid) return;
+    
+    let filteredCerts = certificatesData;
+    if (currentCertCategory !== 'all') {
+        filteredCerts = certificatesData.filter(cert => cert.category === currentCertCategory);
+    }
+    
+    const totalCertificates = filteredCerts.length;
+    const totalHours = filteredCerts.reduce((sum, cert) => sum + (cert.hours || 0), 0);
+    
+    if (totalSpan) totalSpan.innerText = totalCertificates;
+    if (hoursSpan) hoursSpan.innerText = totalHours + '+';
+    
+    if (filteredCerts.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-certificates" style="grid-column: 1/-1; text-align: center; padding: 60px;">
+                <i class="fas fa-certificate" style="font-size: 4rem; color: var(--primary);"></i>
+                <h3>Belum ada sertifikat</h3>
+                <p>${isLoggedIn ? 'Klik "Admin Panel" untuk menambahkan sertifikat' : 'Login sebagai admin untuk menambahkan sertifikat'}</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    filteredCerts.forEach(cert => {
+        let iconClass = 'fa-shield-halved';
+        if (cert.category === 'komdigi') iconClass = 'fa-building';
+        if (cert.category === 'bisaai') iconClass = 'fa-robot';
+        
+        const formattedDate = cert.date ? new Date(cert.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Tanggal tidak tersedia';
+        
+        const badgeHtml = cert.badgeData ? 
+            `<img src="${cert.badgeData}" alt="Badge" class="cert-badge-img" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '';
+        
+        const adminActions = isLoggedIn ? `
+            <div class="cert-item-actions">
+                <button onclick="editCertificate('${cert.id}')" class="btn-edit-portfolio" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteCertificate('${cert.id}')" class="btn-delete-portfolio" title="Hapus">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        ` : '';
+        
+        const hasLink = cert.link && cert.link !== '';
+        
+        html += `
+            <div class="certificate-card" data-id="${cert.id}">
+                ${adminActions}
+                <div class="certificate-icon">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="certificate-content">
+                    <h3>${escapeHtml(cert.title)}</h3>
+                    <p class="cert-issuer">${escapeHtml(cert.issuer)}</p>
+                    <span class="cert-year">${formattedDate}</span>
+                    <p class="cert-description" style="font-size: 0.85rem; color: var(--text-secondary); margin: 8px 0;">
+                        ${escapeHtml(cert.description || '')}
+                    </p>
+                    <div class="cert-actions">
+                        <button class="btn-view-cert" onclick="previewCertificate('${cert.id}')">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                        ${hasLink ? `<a href="${cert.link}" target="_blank" class="cert-link"><i class="fas fa-external-link-alt"></i> Buka Link</a>` : ''}
+                    </div>
+                    <div class="cert-badge-container">
+                        ${badgeHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    grid.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Preview sertifikat
+window.previewCertificate = function(certId) {
+    const cert = certificatesData.find(c => c.id === certId);
+    if (!cert) return;
+    
+    const modal = document.getElementById('certModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    
+    modalTitle.textContent = cert.title;
+    
+    let content = '';
+    
+    if (cert.fileData && cert.fileData !== 'null' && cert.fileData !== '') {
+        if (cert.fileType === 'application/pdf') {
+            content = `
+                <div class="certificate-viewer">
+                    <iframe src="${cert.fileData}" width="100%" height="500px" style="border: none; border-radius: 10px;"></iframe>
+                    <p style="margin-top: 20px;">
+                        <a href="${cert.fileData}" download="sertifikat_${cert.id}.pdf" class="btn-view-cert">
+                            <i class="fas fa-download"></i> Download PDF
+                        </a>
+                    </p>
+                </div>
+            `;
+        } else if (cert.fileType && cert.fileType.startsWith('image/')) {
+            content = `
+                <div class="certificate-viewer">
+                    <img src="${cert.fileData}" alt="${cert.title}" style="max-width: 100%; border-radius: 10px;">
+                    <p style="margin-top: 20px;">
+                        <a href="${cert.fileData}" download="sertifikat_${cert.id}.jpg" class="btn-view-cert">
+                            <i class="fas fa-download"></i> Download Gambar
+                        </a>
+                    </p>
+                </div>
+            `;
+        } else {
+            content = `
+                <div class="certificate-viewer">
+                    <iframe src="${cert.fileData}" width="100%" height="500px" style="border: none; border-radius: 10px;"></iframe>
+                    <p style="margin-top: 20px;">
+                        <a href="${cert.fileData}" download="sertifikat_${cert.id}" class="btn-view-cert">
+                            <i class="fas fa-download"></i> Download File
+                        </a>
+                    </p>
+                </div>
+            `;
+        }
+    } else if (cert.link && cert.link !== '') {
+        if (cert.link.toLowerCase().includes('.pdf') || cert.link.includes('drive.google.com')) {
+            let src = cert.link;
+            if (cert.link.includes('drive.google.com')) {
+                const fileId = cert.link.match(/[-\w]{25,}/);
+                if (fileId) {
+                    src = `https://drive.google.com/file/d/${fileId[0]}/preview`;
+                }
+            }
+            content = `
+                <div class="certificate-viewer">
+                    <iframe src="${src}" width="100%" height="500px" style="border: none; border-radius: 10px;"></iframe>
+                    <p style="margin-top: 20px;">
+                        <a href="${cert.link}" target="_blank" class="btn-view-cert">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                    </p>
+                </div>
+            `;
+        } else {
+            content = `
+                <div class="certificate-viewer">
+                    <img src="${cert.link}" alt="${cert.title}" style="max-width: 100%; border-radius: 10px;">
+                    <p style="margin-top: 20px;">
+                        <a href="${cert.link}" target="_blank" class="btn-view-cert">
+                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                        </a>
+                    </p>
+                </div>
+            `;
+        }
+    } else {
+        content = `
+            <div class="certificate-placeholder">
+                <i class="fas fa-clock"></i>
+                <h4>BELUM ADA FILE</h4>
+                <div style="margin: 30px 0;">
+                    <span style="font-size: 4rem;">📄</span>
+                </div>
+                <p style="font-size: 1.3rem; margin: 20px 0;">${escapeHtml(cert.title)}</p>
+                <p style="font-size: 1rem; color: var(--text-secondary);">${escapeHtml(cert.issuer)}</p>
+                <p style="margin-top: 20px; font-style: italic;">File sertifikat belum diupload</p>
+                ${isLoggedIn ? `<p style="margin-top: 10px;"><button onclick="editCertificate('${cert.id}')" class="btn-view-cert">Upload Sekarang</button></p>` : ''}
+            </div>
+        `;
+    }
+    
+    modalBody.innerHTML = content;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// Tambah sertifikat baru
+window.addCertificate = function() {
+    if (!isLoggedIn) {
+        showToast('Anda harus login terlebih dahulu!', 'error');
+        openLoginModal();
+        return;
+    }
+    
+    const category = document.getElementById('certCategory').value;
+    const title = document.getElementById('certTitle').value.trim();
+    const issuer = document.getElementById('certIssuer').value.trim();
+    const date = document.getElementById('certDate').value;
+    const description = document.getElementById('certDescription').value.trim();
+    const link = document.getElementById('certLink').value.trim();
+    const hours = parseInt(document.getElementById('certHours').value) || 0;
+    const fileInput = document.getElementById('certFile');
+    const badgeInput = document.getElementById('badgeFile');
+    
+    if (!title || !issuer || !date) {
+        showToast('Judul, penerbit, dan tanggal harus diisi!', 'error');
+        return;
+    }
+    
+    const newId = Date.now().toString();
+    
+    const newCert = {
+        id: newId,
+        category: category,
+        title: title,
+        issuer: issuer,
+        date: date,
+        description: description || '',
+        fileData: null,
+        fileType: null,
+        badgeData: null,
+        link: link || '',
+        hours: hours
+    };
+    
+    const promises = [];
+    
+    if (fileInput && fileInput.files.length > 0) {
+        promises.push(handleFileUpload(fileInput.files[0]).then(base64 => {
+            newCert.fileData = base64;
+            newCert.fileType = fileInput.files[0].type;
+        }));
+    }
+    
+    if (badgeInput && badgeInput.files.length > 0) {
+        promises.push(handleFileUpload(badgeInput.files[0]).then(base64 => {
+            newCert.badgeData = base64;
+        }));
+    }
+    
+    Promise.all(promises).then(() => {
+        certificatesData.push(newCert);
+        saveCertificates();
+        renderCertificates();
+        
+        document.getElementById('certTitle').value = '';
+        document.getElementById('certIssuer').value = '';
+        document.getElementById('certDate').value = '';
+        document.getElementById('certDescription').value = '';
+        document.getElementById('certLink').value = '';
+        document.getElementById('certHours').value = '';
+        if (fileInput) fileInput.value = '';
+        if (badgeInput) badgeInput.value = '';
+        document.getElementById('certBadgePreview').innerHTML = '';
+        document.getElementById('certFilePreview').innerHTML = '';
+        
+        showToast('Sertifikat berhasil ditambahkan!', 'success');
+        closeAdminPanel();
+    }).catch(error => {
+        showToast('Gagal mengupload file!', 'error');
+    });
+}
+
+// Edit sertifikat
+window.editCertificate = function(certId) {
+    if (!isLoggedIn) {
+        showToast('Anda harus login terlebih dahulu!', 'error');
+        openLoginModal();
+        return;
+    }
+    
+    const cert = certificatesData.find(c => c.id === certId);
+    if (!cert) return;
+    
+    document.getElementById('certCategory').value = cert.category;
+    document.getElementById('certTitle').value = cert.title;
+    document.getElementById('certIssuer').value = cert.issuer;
+    document.getElementById('certDate').value = cert.date;
+    document.getElementById('certDescription').value = cert.description || '';
+    document.getElementById('certLink').value = cert.link || '';
+    document.getElementById('certHours').value = cert.hours || '';
+    
+    const preview = document.getElementById('certBadgePreview');
+    if (preview) {
+        if (cert.badgeData) {
+            preview.innerHTML = `<img src="${cert.badgeData}" alt="Badge Preview" style="max-width: 100px; border-radius: 5px;">`;
+        } else {
+            preview.innerHTML = '';
+        }
+    }
+    
+    editingCertId = certId;
+    
+    const saveBtn = document.querySelector('#adminPanel .btn-save');
+    if (saveBtn) {
+        saveBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Update Sertifikat';
+        saveBtn.onclick = function() { updateCertificate(certId); };
+    }
+    
+    showAdminPanel();
+}
+
+// Update sertifikat
+window.updateCertificate = function(certId) {
+    if (!isLoggedIn) return;
+    
+    const index = certificatesData.findIndex(c => c.id === certId);
+    if (index === -1) return;
+    
+    const category = document.getElementById('certCategory').value;
+    const title = document.getElementById('certTitle').value.trim();
+    const issuer = document.getElementById('certIssuer').value.trim();
+    const date = document.getElementById('certDate').value;
+    const description = document.getElementById('certDescription').value.trim();
+    const link = document.getElementById('certLink').value.trim();
+    const hours = parseInt(document.getElementById('certHours').value) || 0;
+    const fileInput = document.getElementById('certFile');
+    const badgeInput = document.getElementById('badgeFile');
+    
+    if (!title || !issuer || !date) {
+        showToast('Judul, penerbit, dan tanggal harus diisi!', 'error');
+        return;
+    }
+    
+    const updatedCert = {
+        ...certificatesData[index],
+        category: category,
+        title: title,
+        issuer: issuer,
+        date: date,
+        description: description || '',
+        link: link || '',
+        hours: hours
+    };
+    
+    const promises = [];
+    
+    if (fileInput && fileInput.files.length > 0) {
+        promises.push(handleFileUpload(fileInput.files[0]).then(base64 => {
+            updatedCert.fileData = base64;
+            updatedCert.fileType = fileInput.files[0].type;
+        }));
+    }
+    
+    if (badgeInput && badgeInput.files.length > 0) {
+        promises.push(handleFileUpload(badgeInput.files[0]).then(base64 => {
+            updatedCert.badgeData = base64;
+        }));
+    }
+    
+    Promise.all(promises).then(() => {
+        certificatesData[index] = updatedCert;
+        saveCertificates();
+        renderCertificates();
+        
+        document.getElementById('certTitle').value = '';
+        document.getElementById('certIssuer').value = '';
+        document.getElementById('certDate').value = '';
+        document.getElementById('certDescription').value = '';
+        document.getElementById('certLink').value = '';
+        document.getElementById('certHours').value = '';
+        if (fileInput) fileInput.value = '';
+        if (badgeInput) badgeInput.value = '';
+        document.getElementById('certBadgePreview').innerHTML = '';
+        document.getElementById('certFilePreview').innerHTML = '';
+        
+        const saveBtn = document.querySelector('#adminPanel .btn-save');
+        if (saveBtn) {
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Sertifikat';
+            saveBtn.onclick = function() { addCertificate(); };
+        }
+        
+        editingCertId = null;
+        showToast('Sertifikat berhasil diupdate!', 'success');
+        closeAdminPanel();
+    }).catch(error => {
+        showToast('Gagal mengupload file!', 'error');
+    });
+}
+
+// Hapus sertifikat
+window.deleteCertificate = function(certId) {
+    if (!isLoggedIn) {
+        showToast('Anda harus login terlebih dahulu!', 'error');
+        openLoginModal();
+        return;
+    }
+    
+    if (confirm('Apakah Anda yakin ingin menghapus sertifikat ini?')) {
+        certificatesData = certificatesData.filter(cert => cert.id !== certId);
+        saveCertificates();
+        renderCertificates();
+        showToast('Sertifikat berhasil dihapus!', 'success');
+    }
+}
+
+// Upload file ke Base64
+function handleFileUpload(file) {
+    return new Promise((resolve, reject) => {
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            showToast('File terlalu besar! Maksimal 10MB.', 'error');
+            reject('File terlalu besar');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => {
+            showToast('Gagal membaca file!', 'error');
+            reject('Gagal membaca file');
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Preview file sebelum upload
+window.previewCertFile = function(input) {
+    const preview = document.getElementById('certFilePreview');
+    if (!preview) return;
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (file.type === 'application/pdf') {
+                preview.innerHTML = `<div><i class="fas fa-file-pdf" style="color: #F56565;"></i> PDF: ${file.name}</div>`;
+            } else if (file.type.startsWith('image/')) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100px; border-radius: 5px;">`;
+            } else {
+                preview.innerHTML = `<div><i class="fas fa-file"></i> File: ${file.name}</div>`;
+            }
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '';
+    }
+}
+
+window.previewBadgeImage = function(input) {
+    const preview = document.getElementById('certBadgePreview');
+    if (!preview) return;
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100px; border-radius: 5px;">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.innerHTML = '';
+    }
+}
+
+function initCertificateFileInputs() {
+    const certFile = document.getElementById('certFile');
+    const badgeFile = document.getElementById('badgeFile');
+    
+    if (certFile) certFile.addEventListener('change', function() { previewCertFile(this); });
+    if (badgeFile) badgeFile.addEventListener('change', function() { previewBadgeImage(this); });
+}
+
+function initCertificateCategories() {
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            currentCertCategory = category;
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            renderCertificates();
+        });
+    });
+}
+
+window.saveCertificateLink = function() {
+    if (editingCertId) {
+        updateCertificate(editingCertId);
+    } else {
+        addCertificate();
+    }
+}
+
+// ==================== ADMIN LOGIN ====================
 const ADMIN_USERNAME = "WalDevelop";
 const ADMIN_PASSWORD = "kartika";
 let isLoggedIn = false;
-let currentCert = null;
-let currentCertCategory = 'cisco';
-let certLinks = {
-    cisco: {
-        intro: { name: 'Introduction to Cybersecurity', link: '', badge: '', hours: 15 },
-        network: { name: 'Network Defense', link: '', badge: '', hours: 20 },
-        endpoint: { name: 'Endpoint Security', link: '', badge: '', hours: 15 },
-        threat: { name: 'Cyber Threat Management', link: '', badge: '', hours: 15 },
-        ethical: { name: 'Ethical Hacker', link: '', badge: '', hours: 25 }
-    },
-    komdigi: {
-        digital: { name: 'Digital Talent Scholarship', link: '', badge: '', hours: 40 },
-        ai: { name: 'Artificial Intelligence Fundamentals', link: '', badge: '', hours: 30 },
-        cybersecurity: { name: 'Cybersecurity Awareness', link: '', badge: '', hours: 20 },
-        networking: { name: 'Network Administrator', link: '', badge: '', hours: 35 },
-        cloud: { name: 'Cloud Computing Basics', link: '', badge: '', hours: 25 }
-    },
-    bisaai: {
-        intro: { name: 'AI Introduction', link: '', badge: '', hours: 10 },
-        machine: { name: 'Machine Learning Dasar', link: '', badge: '', hours: 25 },
-        python: { name: 'Python untuk AI', link: '', badge: '', hours: 20 },
-        nlp: { name: 'Natural Language Processing', link: '', badge: '', hours: 30 },
-        vision: { name: 'Computer Vision', link: '', badge: '', hours: 30 }
-    }
-};
-
-function initCertificates() {
-    loadCertLinks();
-    checkLoginStatus();
-    initCertificateCategories();
-    initCertCategorySelect();
-}
-
-function loadCertLinks() {
-    const saved = localStorage.getItem('certLinks');
-    if (saved) {
-        certLinks = JSON.parse(saved);
-    }
-    updateCertCategorySelect();
-    filterCertificates('cisco');
-}
-
-function saveCertLinks() {
-    localStorage.setItem('certLinks', JSON.stringify(certLinks));
-}
 
 function checkLoginStatus() {
     const savedStatus = localStorage.getItem('adminLoggedIn');
@@ -195,24 +723,43 @@ function checkLoginStatus() {
     }
 }
 
+function showAdminPanel() {
+    const adminPanel = document.getElementById('adminPanel');
+    if (adminPanel) {
+        adminPanel.style.display = 'block';
+        adminPanel.classList.add('visible');
+    }
+}
+
+window.closeAdminPanel = function() {
+    const adminPanel = document.getElementById('adminPanel');
+    if (adminPanel) {
+        adminPanel.style.display = 'none';
+        adminPanel.classList.remove('visible');
+    }
+}
+
 window.openLoginModal = function() {
     if (isLoggedIn) {
         showAdminPanel();
     } else {
         const modal = document.getElementById('loginModal');
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        
-        document.getElementById('username').value = '';
-        document.getElementById('password').value = '';
-        document.getElementById('loginError').style.display = 'none';
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
     }
 }
 
 window.closeLoginModal = function() {
     const modal = document.getElementById('loginModal');
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
 }
 
 window.handleLogin = function() {
@@ -232,18 +779,6 @@ window.handleLogin = function() {
         document.getElementById('username').style.borderColor = '#F56565';
         document.getElementById('password').style.borderColor = '#F56565';
     }
-}
-
-function showAdminPanel() {
-    const adminPanel = document.getElementById('adminPanel');
-    adminPanel.style.display = 'block';
-    adminPanel.classList.add('visible');
-}
-
-window.closeAdminPanel = function() {
-    const adminPanel = document.getElementById('adminPanel');
-    adminPanel.style.display = 'none';
-    adminPanel.classList.remove('visible');
 }
 
 window.logoutAdmin = function() {
@@ -271,183 +806,15 @@ function updateAdminButton() {
     }
 }
 
-function initCertCategorySelect() {
-    const categorySelect = document.getElementById('certCategory');
-    if (categorySelect) {
-        categorySelect.addEventListener('change', function() {
-            updateCertCategorySelect();
-        });
-    }
-}
-
-function updateCertCategorySelect() {
-    const categorySelect = document.getElementById('certCategory');
-    if (!categorySelect) return;
-    
-    const category = categorySelect.value;
-    const certSelect = document.getElementById('certSelect');
-    if (!certSelect) return;
-    
-    let options = '';
-    const certs = certLinks[category];
-    for (let key in certs) {
-        options += `<option value="${key}">${certs[key].name}</option>`;
-    }
-    certSelect.innerHTML = options;
-}
-
-function initCertificateCategories() {
-    const categoryBtns = document.querySelectorAll('.category-btn');
-    
-    categoryBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            filterCertificates(category);
-        });
-    });
-}
-
-function filterCertificates(category) {
-    currentCertCategory = category;
-    
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    const activeBtn = document.querySelector(`.category-btn[data-category="${category}"]`);
-    if (activeBtn) activeBtn.classList.add('active');
-    
-    renderCertificates();
-}
-
-function renderCertificates() {
-    const grid = document.getElementById('certificatesGrid');
-    const totalSpan = document.getElementById('totalCertificates');
-    const hoursSpan = document.getElementById('totalHours');
-    if (!grid) return;
-    
-    const certs = certLinks[currentCertCategory];
-    let totalHours = 0;
-    let html = '';
-    
-    for (let key in certs) {
-        const cert = certs[key];
-        totalHours += cert.hours || 0;
-        
-        const linkHtml = cert.link ? 
-            `<a href="${cert.link}" target="_blank" class="cert-link" id="link-${currentCertCategory}-${key}"><i class="fas fa-external-link-alt"></i> Buka Sertifikat</a>` : 
-            '';
-        
-        const badgeHtml = cert.badge ? 
-            `<img src="${cert.badge}" alt="Badge" class="cert-badge-img">` : 
-            '';
-        
-        const adminActions = isLoggedIn ? `
-            <div class="cert-item-actions">
-                <button onclick="editCertificate('${currentCertCategory}', '${key}')" class="btn-edit-portfolio" title="Edit">
-                    <i class="fas fa-edit"></i>
-                </button>
-            </div>
-        ` : '';
-        
-        let iconClass = 'fa-shield-halved';
-        if (currentCertCategory === 'komdigi') iconClass = 'fa-building';
-        if (currentCertCategory === 'bisaai') iconClass = 'fa-robot';
-        
-        html += `
-            <div class="certificate-card" id="cert-${currentCertCategory}-${key}">
-                ${adminActions}
-                <div class="certificate-icon">
-                    <i class="fas ${iconClass}"></i>
-                </div>
-                <div class="certificate-content">
-                    <h3>${cert.name}</h3>
-                    <p class="cert-issuer">${currentCertCategory === 'cisco' ? 'Cisco Networking Academy' : currentCertCategory === 'komdigi' ? 'Kementerian Komdigi' : 'Bisa AI Academy'}</p>
-                    <span class="cert-year">2026</span>
-                    <div class="cert-actions">
-                        <button class="btn-view-cert" onclick="viewCertificate('${currentCertCategory}', '${key}')">
-                            <i class="fas fa-eye"></i> Lihat Sertifikat
-                        </button>
-                        ${linkHtml}
-                    </div>
-                    <div class="cert-badge-container" id="badge-${currentCertCategory}-${key}">
-                        ${badgeHtml}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-    
-    grid.innerHTML = html;
-    if (totalSpan) totalSpan.innerText = Object.keys(certs).length.toString();
-    if (hoursSpan) hoursSpan.innerText = totalHours + '+';
-}
-
-window.viewCertificate = function(category, key) {
-    const modal = document.getElementById('certModal');
-    const modalTitle = document.getElementById('modalTitle');
+// Download sertifikat
+window.downloadCertificate = function() {
     const modalBody = document.getElementById('modalBody');
-    
-    const cert = certLinks[category][key];
-    if (!cert) return;
-    
-    let issuer = '';
-    if (category === 'cisco') issuer = 'Cisco Networking Academy';
-    else if (category === 'komdigi') issuer = 'Kementerian Komdigi';
-    else issuer = 'Bisa AI Academy';
-    
-    modalTitle.textContent = cert.name;
-    currentCert = { category, key };
-    
-    let content = '';
-    if (cert.link) {
-        if (cert.link.toLowerCase().includes('.pdf') || cert.link.includes('drive.google') || cert.link.includes('docs.google')) {
-            let src = cert.link;
-            if (cert.link.includes('drive.google.com')) {
-                const fileId = cert.link.match(/[-\w]{25,}/);
-                if (fileId) {
-                    src = `https://drive.google.com/file/d/${fileId[0]}/preview`;
-                }
-            }
-            content = `
-                <div class="certificate-viewer">
-                    <iframe src="${src}" width="100%" height="500px" style="border: none; border-radius: 10px;"></iframe>
-                    <p style="margin-top: 20px;">
-                        <a href="${cert.link}" target="_blank" class="btn-view-cert" style="display: inline-block;">
-                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
-                        </a>
-                    </p>
-                </div>
-            `;
-        } else {
-            content = `
-                <div class="certificate-viewer">
-                    <img src="${cert.link}" alt="${cert.name}" style="max-width: 100%; border-radius: 10px; box-shadow: var(--shadow);">
-                    <p style="margin-top: 20px;">
-                        <a href="${cert.link}" target="_blank" class="btn-view-cert" style="display: inline-block;">
-                            <i class="fas fa-external-link-alt"></i> Buka Gambar Fullscreen
-                        </a>
-                    </p>
-                </div>
-            `;
-        }
+    const link = modalBody.querySelector('a');
+    if (link && link.href) {
+        window.open(link.href, '_blank');
     } else {
-        content = `
-            <div class="certificate-placeholder">
-                <i class="fas fa-clock"></i>
-                <h4>COMING SOON</h4>
-                <div style="margin: 30px 0;">
-                    <span style="font-size: 4rem;">⏳</span>
-                </div>
-                <p style="font-size: 1.3rem; margin: 20px 0;">${cert.name}</p>
-                <p style="font-size: 1rem; color: var(--text-secondary);">${issuer}</p>
-                <p style="margin-top: 20px; font-style: italic;">Sertifikat akan segera tersedia</p>
-            </div>
-        `;
+        showToast('File tidak tersedia untuk diunduh', 'warning');
     }
-    
-    modalBody.innerHTML = content;
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
 }
 
 window.closeModal = function() {
@@ -458,116 +825,7 @@ window.closeModal = function() {
     }
 }
 
-window.editCertificate = function(category, key) {
-    if (!isLoggedIn) {
-        showToast('Anda harus login terlebih dahulu!', 'error');
-        openLoginModal();
-        return;
-    }
-    
-    document.getElementById('certCategory').value = category;
-    updateCertCategorySelect();
-    
-    setTimeout(() => {
-        document.getElementById('certSelect').value = key;
-    }, 100);
-    
-    const cert = certLinks[category][key];
-    if (cert.link) document.getElementById('certLink').value = cert.link;
-    if (cert.badge) {
-        document.getElementById('certImage').value = cert.badge;
-        document.getElementById('certBadgePreview').innerHTML = `<img src="${cert.badge}" alt="Preview" class="image-preview">`;
-    }
-    
-    showAdminPanel();
-}
-
-window.saveCertificateLink = function() {
-    if (!isLoggedIn) {
-        showToast('Anda harus login terlebih dahulu!', 'error');
-        openLoginModal();
-        return;
-    }
-    
-    const category = document.getElementById('certCategory').value;
-    const certSelect = document.getElementById('certSelect');
-    const certLink = document.getElementById('certLink');
-    const certImage = document.getElementById('certImage');
-    
-    const selectedCert = certSelect.value;
-    const linkValue = certLink.value.trim();
-    const imageValue = certImage.value.trim();
-    
-    if (selectedCert && certLinks[category] && certLinks[category][selectedCert]) {
-        certLinks[category][selectedCert].link = linkValue;
-        certLinks[category][selectedCert].badge = imageValue;
-        saveCertLinks();
-        
-        if (currentCertCategory === category) {
-            renderCertificates();
-        }
-        
-        certLink.value = '';
-        certImage.value = '';
-        document.getElementById('certBadgePreview').innerHTML = '';
-        showToast('Link sertifikat berhasil disimpan!', 'success');
-    }
-}
-
-window.downloadCertificate = function() {
-    if (currentCert && currentCert.category && currentCert.key) {
-        const cert = certLinks[currentCert.category][currentCert.key];
-        if (cert && cert.link) {
-            window.open(cert.link, '_blank');
-        } else {
-            showToast('File sertifikat belum tersedia!', 'warning');
-        }
-    } else {
-        showToast('File sertifikat belum tersedia!', 'warning');
-    }
-}
-
-window.previewBadgeImage = function(url) {
-    const preview = document.getElementById('certBadgePreview');
-    if (!preview) return;
-    if (url) {
-        preview.innerHTML = `<img src="${url}" alt="Preview" class="image-preview" onerror="this.style.display='none'">`;
-    } else {
-        preview.innerHTML = '';
-    }
-}
-
-window.onclick = function(event) {
-    const certModal = document.getElementById('certModal');
-    if (certModal && event.target === certModal) {
-        closeModal();
-    }
-    
-    const confirmModal = document.getElementById('confirmModal');
-    if (confirmModal && event.target === confirmModal) {
-        closeConfirmModal();
-    }
-    
-    const loginModal = document.getElementById('loginModal');
-    if (loginModal && event.target === loginModal) {
-        closeLoginModal();
-    }
-    
-    const portfolioLoginModal = document.getElementById('portfolioLoginModal');
-    if (portfolioLoginModal && event.target === portfolioLoginModal) {
-        closePortfolioLoginModal();
-    }
-}
-
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeModal();
-        closeConfirmModal();
-        closeLoginModal();
-        closePortfolioLoginModal();
-    }
-});
-
+// ==================== PORTFOLIO MANAGEMENT ====================
 const PORTFOLIO_ADMIN_USERNAME = "WalDevelop";
 const PORTFOLIO_ADMIN_PASSWORD = "kartika";
 let isPortfolioLoggedIn = false;
@@ -868,8 +1126,10 @@ window.handlePortfolioLogin = function() {
 
 function showPortfolioAdminPanel() {
     const panel = document.getElementById('portfolioAdminPanel');
-    panel.style.display = 'block';
-    panel.classList.add('visible');
+    if (panel) {
+        panel.style.display = 'block';
+        panel.classList.add('visible');
+    }
     
     document.getElementById('portfolioTitle').value = '';
     document.getElementById('portfolioDescription').value = '';
@@ -878,14 +1138,18 @@ function showPortfolioAdminPanel() {
     document.getElementById('portfolioImagePreview').innerHTML = '';
     
     const saveBtn = document.getElementById('portfolioSaveBtn');
-    saveBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Tambah Portfolio';
-    saveBtn.onclick = addPortfolioItem;
+    if (saveBtn) {
+        saveBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Tambah Portfolio';
+        saveBtn.onclick = addPortfolioItem;
+    }
 }
 
 window.closePortfolioAdminPanel = function() {
     const panel = document.getElementById('portfolioAdminPanel');
-    panel.style.display = 'none';
-    panel.classList.remove('visible');
+    if (panel) {
+        panel.style.display = 'none';
+        panel.classList.remove('visible');
+    }
 }
 
 window.logoutPortfolioAdmin = function() {
@@ -1094,6 +1358,7 @@ window.updatePortfolioItem = function(id) {
     }
 }
 
+// ==================== QUICKMATH GAME ====================
 let currentQuestion = 0;
 let score = 0;
 let timeLeft = 10;
@@ -1370,3 +1635,32 @@ function initGame() {
         }
     }
 }
+
+// Global onclick handler untuk modal
+window.onclick = function(event) {
+    const certModal = document.getElementById('certModal');
+    if (certModal && event.target === certModal) {
+        closeModal();
+    }
+    const loginModal = document.getElementById('loginModal');
+    if (loginModal && event.target === loginModal) {
+        closeLoginModal();
+    }
+    const portfolioLoginModal = document.getElementById('portfolioLoginModal');
+    if (portfolioLoginModal && event.target === portfolioLoginModal) {
+        closePortfolioLoginModal();
+    }
+    const confirmModal = document.getElementById('confirmModal');
+    if (confirmModal && event.target === confirmModal) {
+        closeConfirmModal();
+    }
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeModal();
+        closeLoginModal();
+        closeConfirmModal();
+        closePortfolioLoginModal();
+    }
+});
