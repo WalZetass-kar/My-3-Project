@@ -141,13 +141,15 @@ function showToast(message, type = 'success') {
 let certificatesData = [];
 let currentCertCategory = 'all';
 let editingCertId = null;
+let isLoggedIn = false;
 
 // Inisialisasi sertifikat
 function initCertificates() {
+    console.log('initCertificates dipanggil');
     loadCertificates();
     initCertificateCategories();
     initCertificateFileInputs();
-    checkLoginStatus();
+    checkAdminLoginStatus();
     renderCertificates();
 }
 
@@ -156,11 +158,12 @@ function loadCertificates() {
     const saved = localStorage.getItem('certificatesData');
     if (saved) {
         certificatesData = JSON.parse(saved);
+        console.log('Data sertifikat dimuat dari localStorage:', certificatesData.length, 'sertifikat');
     } else {
-        // Data default
+        // Data default yang lebih lengkap
         certificatesData = [
             {
-                id: 'default-1',
+                id: '1',
                 category: 'cisco',
                 title: 'Introduction to Cybersecurity',
                 issuer: 'Cisco Networking Academy',
@@ -173,7 +176,7 @@ function loadCertificates() {
                 hours: 15
             },
             {
-                id: 'default-2',
+                id: '2',
                 category: 'cisco',
                 title: 'Network Defense',
                 issuer: 'Cisco Networking Academy',
@@ -186,7 +189,7 @@ function loadCertificates() {
                 hours: 20
             },
             {
-                id: 'default-3',
+                id: '3',
                 category: 'komdigi',
                 title: 'Digital Talent Scholarship',
                 issuer: 'Kementerian Komdigi',
@@ -199,7 +202,7 @@ function loadCertificates() {
                 hours: 40
             },
             {
-                id: 'default-4',
+                id: '4',
                 category: 'bisaai',
                 title: 'AI Introduction',
                 issuer: 'Bisa AI Academy',
@@ -210,15 +213,30 @@ function loadCertificates() {
                 badgeData: null,
                 link: '',
                 hours: 10
+            },
+            {
+                id: '5',
+                category: 'komdigi',
+                title: 'Cybersecurity Awareness',
+                issuer: 'Kementerian Komdigi',
+                date: '2026-02-28',
+                description: 'Kesadaran keamanan siber untuk melindungi diri dari ancaman digital.',
+                fileData: null,
+                fileType: null,
+                badgeData: null,
+                link: '',
+                hours: 30
             }
         ];
         saveCertificates();
+        console.log('Data default sertifikat dibuat:', certificatesData.length, 'sertifikat');
     }
 }
 
 // Simpan ke localStorage
 function saveCertificates() {
     localStorage.setItem('certificatesData', JSON.stringify(certificatesData));
+    console.log('Sertifikat disimpan ke localStorage');
 }
 
 // Render semua sertifikat
@@ -227,7 +245,12 @@ function renderCertificates() {
     const totalSpan = document.getElementById('totalCertificates');
     const hoursSpan = document.getElementById('totalHours');
     
-    if (!grid) return;
+    if (!grid) {
+        console.log('Error: Element certificatesGrid tidak ditemukan!');
+        return;
+    }
+    
+    console.log('renderCertificates dipanggil, currentCertCategory:', currentCertCategory);
     
     let filteredCerts = certificatesData;
     if (currentCertCategory !== 'all') {
@@ -239,6 +262,8 @@ function renderCertificates() {
     
     if (totalSpan) totalSpan.innerText = totalCertificates;
     if (hoursSpan) hoursSpan.innerText = totalHours + '+';
+    
+    console.log('Menampilkan', filteredCerts.length, 'sertifikat');
     
     if (filteredCerts.length === 0) {
         grid.innerHTML = `
@@ -252,7 +277,7 @@ function renderCertificates() {
     }
     
     let html = '';
-    filteredCerts.forEach(cert => {
+    filteredCerts.forEach((cert) => {
         let iconClass = 'fa-shield-halved';
         if (cert.category === 'komdigi') iconClass = 'fa-building';
         if (cert.category === 'bisaai') iconClass = 'fa-robot';
@@ -303,6 +328,7 @@ function renderCertificates() {
     });
     
     grid.innerHTML = html;
+    console.log('Sertifikat berhasil dirender');
 }
 
 function escapeHtml(text) {
@@ -348,49 +374,18 @@ window.previewCertificate = function(certId) {
                     </p>
                 </div>
             `;
-        } else {
-            content = `
-                <div class="certificate-viewer">
-                    <iframe src="${cert.fileData}" width="100%" height="500px" style="border: none; border-radius: 10px;"></iframe>
-                    <p style="margin-top: 20px;">
-                        <a href="${cert.fileData}" download="sertifikat_${cert.id}" class="btn-view-cert">
-                            <i class="fas fa-download"></i> Download File
-                        </a>
-                    </p>
-                </div>
-            `;
         }
     } else if (cert.link && cert.link !== '') {
-        if (cert.link.toLowerCase().includes('.pdf') || cert.link.includes('drive.google.com')) {
-            let src = cert.link;
-            if (cert.link.includes('drive.google.com')) {
-                const fileId = cert.link.match(/[-\w]{25,}/);
-                if (fileId) {
-                    src = `https://drive.google.com/file/d/${fileId[0]}/preview`;
-                }
-            }
-            content = `
-                <div class="certificate-viewer">
-                    <iframe src="${src}" width="100%" height="500px" style="border: none; border-radius: 10px;"></iframe>
-                    <p style="margin-top: 20px;">
-                        <a href="${cert.link}" target="_blank" class="btn-view-cert">
-                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
-                        </a>
-                    </p>
-                </div>
-            `;
-        } else {
-            content = `
-                <div class="certificate-viewer">
-                    <img src="${cert.link}" alt="${cert.title}" style="max-width: 100%; border-radius: 10px;">
-                    <p style="margin-top: 20px;">
-                        <a href="${cert.link}" target="_blank" class="btn-view-cert">
-                            <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
-                        </a>
-                    </p>
-                </div>
-            `;
-        }
+        content = `
+            <div class="certificate-viewer">
+                <img src="${cert.link}" alt="${cert.title}" style="max-width: 100%; border-radius: 10px;">
+                <p style="margin-top: 20px;">
+                    <a href="${cert.link}" target="_blank" class="btn-view-cert">
+                        <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+                    </a>
+                </p>
+            </div>
+        `;
     } else {
         content = `
             <div class="certificate-placeholder">
@@ -471,6 +466,7 @@ window.addCertificate = function() {
         saveCertificates();
         renderCertificates();
         
+        // Reset form
         document.getElementById('certTitle').value = '';
         document.getElementById('certIssuer').value = '';
         document.getElementById('certDate').value = '';
@@ -485,6 +481,7 @@ window.addCertificate = function() {
         showToast('Sertifikat berhasil ditambahkan!', 'success');
         closeAdminPanel();
     }).catch(error => {
+        console.error('Error:', error);
         showToast('Gagal mengupload file!', 'error');
     });
 }
@@ -581,6 +578,7 @@ window.updateCertificate = function(certId) {
         saveCertificates();
         renderCertificates();
         
+        // Reset form
         document.getElementById('certTitle').value = '';
         document.getElementById('certIssuer').value = '';
         document.getElementById('certDate').value = '';
@@ -602,6 +600,7 @@ window.updateCertificate = function(certId) {
         showToast('Sertifikat berhasil diupdate!', 'success');
         closeAdminPanel();
     }).catch(error => {
+        console.error('Error:', error);
         showToast('Gagal mengupload file!', 'error');
     });
 }
@@ -655,8 +654,6 @@ window.previewCertFile = function(input) {
                 preview.innerHTML = `<div><i class="fas fa-file-pdf" style="color: #F56565;"></i> PDF: ${file.name}</div>`;
             } else if (file.type.startsWith('image/')) {
                 preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 100px; border-radius: 5px;">`;
-            } else {
-                preview.innerHTML = `<div><i class="fas fa-file"></i> File: ${file.name}</div>`;
             }
         };
         reader.readAsDataURL(file);
@@ -690,9 +687,12 @@ function initCertificateFileInputs() {
 
 function initCertificateCategories() {
     const categoryBtns = document.querySelectorAll('.category-btn');
+    console.log('Jumlah category button:', categoryBtns.length);
+    
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const category = this.getAttribute('data-category');
+            console.log('Kategori dipilih:', category);
             currentCertCategory = category;
             categoryBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
@@ -709,12 +709,11 @@ window.saveCertificateLink = function() {
     }
 }
 
-// ==================== ADMIN LOGIN ====================
+// ==================== ADMIN LOGIN (untuk sertifikat) ====================
 const ADMIN_USERNAME = "WalDevelop";
 const ADMIN_PASSWORD = "kartika";
-let isLoggedIn = false;
 
-function checkLoginStatus() {
+function checkAdminLoginStatus() {
     const savedStatus = localStorage.getItem('adminLoggedIn');
     if (savedStatus === 'true') {
         isLoggedIn = true;
@@ -773,6 +772,7 @@ window.handleLogin = function() {
         closeLoginModal();
         showAdminPanel();
         updateAdminButton();
+        renderCertificates();
         showToast('Login berhasil! Selamat datang Admin.', 'success');
     } else {
         errorElement.style.display = 'block';
@@ -786,6 +786,7 @@ window.logoutAdmin = function() {
     localStorage.removeItem('adminLoggedIn');
     closeAdminPanel();
     updateAdminButton();
+    renderCertificates();
     showToast('Logout berhasil!', 'info');
 }
 
@@ -806,7 +807,6 @@ function updateAdminButton() {
     }
 }
 
-// Download sertifikat
 window.downloadCertificate = function() {
     const modalBody = document.getElementById('modalBody');
     const link = modalBody.querySelector('a');
