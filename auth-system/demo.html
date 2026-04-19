@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Sistem Login & Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f7fafc;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section h2::before {
+            content: '→';
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .info-box strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .info-box p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        
+        .credentials {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .credentials h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .credentials .cred-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #4299e1;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .flow-diagram {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .flow-step {
+            display: inline-block;
+            padding: 15px 25px;
+            background: #667eea;
+            color: white;
+            border-radius: 10px;
+            margin: 10px;
+            font-weight: 600;
+        }
+        
+        .flow-arrow {
+            display: inline-block;
+            color: #667eea;
+            font-size: 2rem;
+            margin: 0 10px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+        
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .feature-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .feature-card li {
+            padding: 5px 0;
+            color: #4a5568;
+        }
+        
+        .feature-card li::before {
+            content: '✓';
+            color: #48bb78;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .storage-info {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .storage-info h4 {
+            color: #c53030;
+            margin-bottom: 10px;
+        }
+        
+        code {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .flow-step {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .flow-arrow {
+                display: block;
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Sistem Login & Dashboard</h1>
+        <p class="subtitle">Vanilla JavaScript - Tanpa Framework & Backend</p>
+        
+        <!-- Credentials -->
+        <div class="credentials">
+            <h3>🔑 Default Login Credentials</h3>
+            <div class="cred-item">Username: <strong>admin</strong></div>
+            <div class="cred-item">Password: <strong>admin123</strong></div>
+        </div>
+        
+        <!-- Quick Start -->
+        <div class="section">
+            <h2>Mulai Sekarang</h2>
+            <div class="btn-group">
+                <a href="login.html" class="btn btn-primary">🚪 Login Page</a>
+                <a href="dashboard.html" class="btn btn-secondary">📊 Dashboard</a>
+                <a href="index.html" class="btn btn-info">🌐 Landing Page</a>
+            </div>
+        </div>
+        
+        <!-- Alur Kerja -->
+        <div class="section">
+            <h2>Alur Kerja Sistem</h2>
+            <div class="flow-diagram">
+                <div class="flow-step">1. Login</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">2. Dashboard</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">3. Edit Konten</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">4. Simpan</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">5. Lihat Landing</div>
+            </div>
+        </div>
+        
+        <!-- Fitur -->
+        <div class="section">
+            <h2>Fitur Lengkap</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h4>🔒 Autentikasi</h4>
+                    <ul>
+                        <li>Login/Logout</li>
+                        <li>Session management</li>
+                        <li>Remember me</li>
+                        <li>Ganti password</li>
+                        <li>Proteksi halaman</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>📊 Dashboard</h4>
+                    <ul>
+                        <li>Edit hero section</li>
+                        <li>Edit about section</li>
+                        <li>Edit contact info</li>
+                        <li>Upload gambar</li>
+                        <li>Preview real-time</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🌐 Landing Page</h4>
+                    <ul>
+                        <li>Dynamic content</li>
+                        <li>Responsive design</li>
+                        <li>Smooth animations</li>
+                        <li>Auto-update</li>
+                        <li>SEO friendly</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>💾 Data Management</h4>
+                    <ul>
+                        <li>LocalStorage</li>
+                        <li>Base64 images</li>
+                        <li>Export data</li>
+                        <li>Import data</li>
+                        <li>Reset to default</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Struktur Data -->
+        <div class="section">
+            <h2>Struktur Data (localStorage)</h2>
+            
+            <div class="info-box">
+                <strong>authData</strong>
+                <p>Menyimpan credentials admin (username & password)</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>isAuthenticated</strong>
+                <p>Status login: <code>true</code> atau <code>false</code></p>
+            </div>
+            
+            <div class="info-box">
+                <strong>currentUser</strong>
+                <p>Info user yang sedang login (username, login time)</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>landingPageData</strong>
+                <p>Semua konten landing page (hero, about, contact)</p>
+            </div>
+            
+            <div class="storage-info">
+                <h4>⚠️ Penting!</h4>
+                <p>Data disimpan di browser localStorage. Jika clear browser data, semua akan hilang. Gunakan fitur Export untuk backup!</p>
+            </div>
+        </div>
+        
+        <!-- Cara Pakai -->
+        <div class="section">
+            <h2>Cara Menggunakan</h2>
+            
+            <div class="info-box">
+                <strong>1. Login ke Dashboard</strong>
+                <p>Klik tombol "Login Page" → Masukkan username & password → Klik "Masuk"</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>2. Edit Konten Landing Page</strong>
+                <p>Di dashboard, isi form dengan konten yang diinginkan. Bisa edit text, upload gambar, dll.</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>3. Upload Gambar (Optional)</strong>
+                <p>Klik area upload → Pilih gambar (max 5MB) → Preview akan muncul</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>4. Simpan Perubahan</strong>
+                <p>Klik tombol "Simpan Perubahan" → Data tersimpan ke localStorage</p>
+            </div>
+            
+            <div class="info-box">
+                <strong>5. Lihat Hasil</strong>
+                <p>Buka "Landing Page" → Konten yang diedit akan muncul!</p>
+            </div>
+        </div>
+        
+        <!-- Teknologi -->
+        <div class="section">
+            <h2>Teknologi yang Digunakan</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h4>HTML5</h4>
+                    <ul>
+                        <li>Semantic HTML</li>
+                        <li>Form validation</li>
+                        <li>File input</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>CSS3</h4>
+                    <ul>
+                        <li>Flexbox & Grid</li>
+                        <li>Animations</li>
+                        <li>Responsive</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>Vanilla JavaScript</h4>
+                    <ul>
+                        <li>ES6+</li>
+                        <li>LocalStorage API</li>
+                        <li>FileReader API</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e2e8f0;">
+            <p style="color: #718096; margin-bottom: 15px;">
+                Sistem ini menggunakan localStorage untuk menyimpan data.<br>
+                Tidak ada backend, semua berjalan di browser.
+            </p>
+            <div class="btn-group">
+                <a href="login.html" class="btn btn-primary">🚀 Mulai Sekarang</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

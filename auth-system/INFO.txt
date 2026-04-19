@@ -1,0 +1,73 @@
+╔════════════════════════════════════════════════════════════════╗
+║          SISTEM LOGIN & DASHBOARD - VANILLA JAVASCRIPT         ║
+╚════════════════════════════════════════════════════════════════╝
+
+📂 STRUKTUR FILE:
+├── login.html          → Halaman login
+├── dashboard.html      → Dashboard admin (terproteksi)
+├── index.html          → Landing page (public)
+├── auth.js             → Logic autentikasi
+├── dashboard.js        → Logic CRUD landing page
+├── landing.js          → Logic render landing page
+├── auth-styles.css     → Styles login & dashboard
+└── landing-styles.css  → Styles landing page
+
+🚀 QUICK START:
+1. Buka: login.html
+2. Login: admin / admin123
+3. Edit konten di dashboard
+4. Lihat hasil di index.html
+
+🔑 DEFAULT CREDENTIALS:
+Username: admin
+Password: admin123
+
+💾 DATA STORAGE (localStorage):
+- authData           → Credentials
+- isAuthenticated    → Status login (true/false)
+- currentUser        → Info user yang login
+- landingPageData    → Konten landing page
+
+🔒 PROTEKSI HALAMAN:
+- dashboard.html → Hanya bisa diakses jika sudah login
+- login.html     → Auto redirect ke dashboard jika sudah login
+- index.html     → Public (semua bisa akses)
+
+📤 UPLOAD GAMBAR:
+- Max size: 5MB
+- Format: JPG, PNG, GIF, WebP
+- Disimpan sebagai Base64 di localStorage
+
+🎨 FITUR DASHBOARD:
+✓ Edit Hero Section (title, subtitle, description, image, CTA)
+✓ Edit About Section (title, content, image)
+✓ Edit Contact Section (email, phone, address)
+✓ Upload & preview gambar
+✓ Ganti password
+✓ Export data ke JSON
+✓ Reset data ke default
+
+🔄 ALUR KERJA:
+Login → Dashboard → Edit Konten → Simpan → Lihat di Landing Page
+
+🐛 TROUBLESHOOTING:
+- Tidak bisa login? → Buka console, jalankan: localStorage.clear()
+- Data hilang? → Cek localStorage di DevTools (F12 → Application)
+- Gambar tidak muncul? → Cek ukuran file (max 5MB)
+
+📱 RESPONSIVE: Desktop, Tablet, Mobile
+
+🎯 CARA GANTI PASSWORD:
+Dashboard → Menu "Pengaturan" → Form "Ganti Password"
+
+🔧 CUSTOMIZATION:
+- Warna: Edit :root di CSS files
+- Logo: Edit icon & text di HTML files
+- Default content: Edit getDefaultLandingData() di dashboard.js
+
+═══════════════════════════════════════════════════════════════
+
+Semua kode sudah lengkap dengan komentar. Baca komentar di file JS
+untuk penjelasan detail setiap function.
+
+Happy Coding! 🚀
