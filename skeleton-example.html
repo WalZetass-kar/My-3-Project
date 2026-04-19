@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skeleton Loading & Upload Example</title>
+    <link rel="stylesheet" href="skeleton-styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Demo: Skeleton Loading & File Upload</h1>
+        
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <h2>📤 Upload File</h2>
+            <div class="upload-form">
+                <input type="file" id="fileInput" accept="image/*,.pdf" multiple>
+                <button onclick="handleUpload()" class="btn-upload">Upload File</button>
+            </div>
+            <div id="uploadStatus" class="upload-status"></div>
+        </section>
+
+        <!-- Display Section with Skeleton -->
+        <section class="display-section">
+            <h2>📁 File yang Diupload</h2>
+            <div class="controls">
+                <button onclick="simulateLoading()" class="btn-secondary">Simulasi Loading</button>
+                <button onclick="clearAllData()" class="btn-danger">Hapus Semua Data</button>
+            </div>
+            
+            <!-- Grid untuk Card -->
+            <div id="fileGrid" class="file-grid">
+                <!-- Skeleton atau data akan muncul di sini -->
+            </div>
+        </section>
+
+        <!-- Table Example -->
+        <section class="table-section">
+            <h2>📊 Tabel Data</h2>
+            <div id="fileTable">
+                <!-- Skeleton table atau data akan muncul di sini -->
+            </div>
+        </section>
+    </div>
+
+    <script src="skeleton-script.js"></script>
+</body>
+</html>

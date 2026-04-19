@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Landing Page</title>
+    <link rel="stylesheet" href="landing-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Quick Access (hanya muncul jika sudah login) -->
+    <div id="adminQuickAccess" class="admin-quick-access" style="display: none;">
+        <a href="dashboard.html" class="admin-link">
+            <i class="fas fa-cog"></i> Dashboard Admin
+        </a>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-rocket"></i>
+                <span>MyWebsite</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="login.html" class="btn-nav-login">
+                    <i class="fas fa-sign-in-alt"></i> Admin
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 id="heroTitle" class="hero-title">
+                        Selamat Datang di Website Kami
+                    </h1>
+                    <p id="heroSubtitle" class="hero-subtitle">
+                        Solusi Terbaik untuk Bisnis Anda
+                    </p>
+                    <p id="heroDescription" class="hero-description">
+                        Kami menyediakan layanan terbaik untuk membantu bisnis Anda berkembang dengan teknologi modern dan inovatif.
+                    </p>
+                    <a href="#contact" id="heroCTAButton" class="btn-hero">
+                        <i class="fas fa-rocket"></i> <span id="heroCTAText">Mulai Sekarang</span>
+                    </a>
+                </div>
+                <div class="hero-image">
+                    <img id="heroImage" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format" alt="Hero Image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <img id="aboutImage" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format" alt="About Image">
+                </div>
+                <div class="about-text">
+                    <h2 id="aboutTitle" class="section-title">Tentang Kami</h2>
+                    <div id="aboutContent" class="about-description">
+                        <p>Kami adalah tim profesional yang berdedikasi untuk memberikan solusi terbaik bagi klien kami. Dengan pengalaman bertahun-tahun di industri, kami memahami kebutuhan bisnis modern.</p>
+                        <p>Visi kami adalah menjadi mitra terpercaya dalam transformasi digital bisnis Anda. Kami berkomitmen untuk memberikan layanan berkualitas tinggi dengan pendekatan yang inovatif dan customer-centric.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Hubungi Kami</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p id="contactEmail">info@example.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Telepon</h4>
+                            <p id="contactPhone">+62 812 3456 7890</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Alamat</h4>
+                            <p id="contactAddress">Jl. Contoh No. 123, Jakarta, Indonesia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 MyWebsite. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="landing.js"></script>
+</body>
+</html>
