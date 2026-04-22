@@ -1,3 +1,124 @@
+// ===== AUTHENTICATION SYSTEM =====
+const ADMIN_CONFIG = {
+    STORAGE_KEY: 'adminAuthData',
+    SESSION_KEY: 'isAdminAuthenticated',
+    USER_KEY: 'currentAdminUser',
+    REMEMBER_KEY: 'rememberedUsername',
+    DEFAULT_USERNAME: 'WalDevelop',
+    DEFAULT_PASSWORD: 'kartika'
+};
+
+// Initialize admin credentials
+function initAdminAuth() {
+    const authData = localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY);
+    if (!authData) {
+        const defaultAuth = {
+            username: ADMIN_CONFIG.DEFAULT_USERNAME,
+            password: ADMIN_CONFIG.DEFAULT_PASSWORD,
+            createdAt: new Date().toISOString()
+        };
+        localStorage.setItem(ADMIN_CONFIG.STORAGE_KEY, JSON.stringify(defaultAuth));
+    }
+}
+initAdminAuth();
+
+// Check if admin is authenticated
+function isAdminAuthenticated() {
+    return localStorage.getItem(ADMIN_CONFIG.SESSION_KEY) === 'true';
+}
+
+// Get current admin user
+function getCurrentAdminUser() {
+    try {
+        const user = localStorage.getItem(ADMIN_CONFIG.USER_KEY);
+        return user ? JSON.parse(user) : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+// Handle admin login
+function handleAdminLogin(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
+    const btnLogin = document.getElementById('btnLogin');
+    const messageEl = document.getElementById('loginMessage');
+    
+    if (!username || !password) {
+        showLoginMessage('Username dan password harus diisi!', 'error');
+        return;
+    }
+    
+    // Show loading
+    btnLogin.disabled = true;
+    btnLogin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+    
+    setTimeout(() => {
+        const authData = JSON.parse(localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY));
+        
+        if (username === authData.username && password === authData.password) {
+            // Login success
+            const userData = {
+                username: username,
+                loginTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem(ADMIN_CONFIG.SESSION_KEY, 'true');
+            localStorage.setItem(ADMIN_CONFIG.USER_KEY, JSON.stringify(userData));
+            
+            if (rememberMe) {
+                localStorage.setItem(ADMIN_CONFIG.REMEMBER_KEY, username);
+            } else {
+                localStorage.removeItem(ADMIN_CONFIG.REMEMBER_KEY);
+            }
+            
+            showLoginMessage('Login berhasil! Mengalihkan...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+            
+        } else {
+            // Login failed
+            showLoginMessage('Username atau password salah!', 'error');
+            btnLogin.disabled = false;
+            btnLogin.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+            
+            const form = document.getElementById('loginForm');
+            form.classList.add('shake');
+            setTimeout(() => form.classList.remove('shake'), 500);
+        }
+    }, 800);
+}
+
+// Handle admin logout
+function handleAdminLogout() {
+    if (confirm('Yakin ingin logout?')) {
+        localStorage.removeItem(ADMIN_CONFIG.SESSION_KEY);
+        localStorage.removeItem(ADMIN_CONFIG.USER_KEY);
+        window.location.href = 'login.html';
+    }
+}
+
+// Show login message
+function showLoginMessage(message, type = 'info') {
+    const messageEl = document.getElementById('loginMessage');
+    if (!messageEl) return;
+    
+    messageEl.textContent = message;
+    messageEl.className = `login-message ${type}`;
+    messageEl.style.display = 'block';
+    
+    setTimeout(() => {
+        messageEl.style.display = 'none';
+    }, 5000);
+}
+
+// ===== END AUTHENTICATION SYSTEM =====
+
 document.addEventListener('DOMContentLoaded', function() {
     initThemeToggle();
     initNavigation();
@@ -253,7 +374,10 @@ window.handleLogin = function() {
     const password = document.getElementById('password').value;
     const errorElement = document.getElementById('loginError');
     
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    // Gunakan auth system yang sama
+    const authData = JSON.parse(localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY));
+    
+    if (username === authData.username && password === authData.password) {
         isLoggedIn = true;
         localStorage.setItem('adminLoggedIn', 'true');
         closeLoginModal();
@@ -985,7 +1109,10 @@ window.handlePortfolioLogin = function() {
     const password = document.getElementById('portfolioPassword').value;
     const errorElement = document.getElementById('portfolioLoginError');
     
-    if (username === PORTFOLIO_ADMIN_USERNAME && password === PORTFOLIO_ADMIN_PASSWORD) {
+    // Gunakan auth system yang sama
+    const authData = JSON.parse(localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY));
+    
+    if (username === authData.username && password === authData.password) {
         isPortfolioLoggedIn = true;
         localStorage.setItem('portfolioAdminLoggedIn', 'true');
         closePortfolioLoginModal();

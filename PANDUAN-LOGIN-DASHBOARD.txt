@@ -1,0 +1,236 @@
+╔════════════════════════════════════════════════════════════════╗
+║     SISTEM LOGIN & DASHBOARD - WEBSITE IHWAL MAULANA          ║
+╚════════════════════════════════════════════════════════════════╝
+
+🎯 PERUBAHAN YANG SUDAH DILAKUKAN:
+
+✅ 1. HALAMAN BARU:
+   - login.html       → Halaman login admin
+   - dashboard.html   → Dashboard untuk kelola konten
+
+✅ 2. HALAMAN YANG DIUPDATE:
+   - index.html       → Tambah link Admin & load data dari localStorage
+   - portofolio.html  → Tambah link Admin di navbar
+   - sertifikat.html  → Tambah link Admin di navbar
+   - script.js        → Tambah sistem autentikasi
+   - style.css        → Tambah styling login & dashboard
+
+✅ 3. FITUR BARU:
+   - Sistem login dengan localStorage
+   - Dashboard admin untuk edit landing page
+   - Proteksi halaman dashboard
+   - Auto-redirect jika belum/sudah login
+   - Link admin di navbar (berubah jadi "Dashboard" jika sudah login)
+   - Landing page load data dari localStorage
+
+═══════════════════════════════════════════════════════════════
+
+🚀 CARA MENGGUNAKAN:
+
+1. BUKA HALAMAN LOGIN:
+   → Buka: login.html
+   → Masukkan username & password admin
+   → Klik "Masuk"
+
+2. MASUK KE DASHBOARD:
+   → Otomatis redirect ke dashboard.html
+   → Lihat statistik website
+   → Klik "Edit Landing Page" untuk edit konten
+
+3. EDIT LANDING PAGE:
+   → Isi form dengan konten baru
+   → Edit judul, subjudul, deskripsi
+   → Edit link gambar profil
+   → Edit link social media
+   → Klik "Simpan Perubahan"
+
+4. LIHAT HASIL:
+   → Buka index.html
+   → Konten yang diedit akan muncul!
+   → Data tersimpan di localStorage
+
+5. KELOLA PORTFOLIO & SERTIFIKAT:
+   → Dari dashboard, klik link "Kelola Portfolio" atau "Kelola Sertifikat"
+   → Atau langsung buka portofolio.html / sertifikat.html
+   → Login menggunakan username & password yang sama
+   → Tambah/edit konten seperti biasa
+
+6. LOGOUT:
+   → Klik tombol "Logout" di sidebar atau navbar
+   → Otomatis redirect ke login.html
+
+═══════════════════════════════════════════════════════════════
+
+🔐 SISTEM AUTENTIKASI:
+
+📌 Data Disimpan di localStorage:
+   - adminAuthData         → Credentials admin
+   - isAdminAuthenticated  → Status login (true/false)
+   - currentAdminUser      → Info user yang login
+   - landingPageData       → Konten landing page
+
+📌 Proteksi Halaman:
+   - dashboard.html → Hanya bisa diakses jika sudah login
+   - login.html     → Auto redirect ke dashboard jika sudah login
+   - index.html     → Public (semua bisa akses)
+
+📌 Link Admin di Navbar:
+   - Sebelum login: "🔒 Admin" → ke login.html
+   - Setelah login: "🛡️ Dashboard" → ke dashboard.html
+
+═══════════════════════════════════════════════════════════════
+
+📊 FITUR DASHBOARD:
+
+✓ Dashboard Home:
+  - Statistik total portfolio
+  - Statistik total sertifikat
+  - Total jam belajar
+  - Last update
+  - Quick actions
+
+✓ Edit Landing Page:
+  - Edit hero section (judul, subjudul, deskripsi, gambar)
+  - Edit social media links (LinkedIn, GitHub, Instagram)
+  - Simpan perubahan ke localStorage
+  - Preview langsung di index.html
+
+✓ Kelola Portfolio:
+  - Link ke portofolio.html
+  - Login otomatis menggunakan credentials yang sama
+
+✓ Kelola Sertifikat:
+  - Link ke sertifikat.html
+  - Login otomatis menggunakan credentials yang sama
+
+═══════════════════════════════════════════════════════════════
+
+🔄 ALUR KERJA:
+
+1. User buka login.html
+   ↓
+2. Input username & password
+   ↓
+3. Sistem cek credentials di localStorage
+   ↓
+4. Jika benar:
+   - Set isAdminAuthenticated = true
+   - Set currentAdminUser
+   - Redirect ke dashboard.html
+   ↓
+5. Di dashboard:
+   - Edit konten landing page
+   - Simpan ke localStorage
+   ↓
+6. Buka index.html:
+   - Load data dari localStorage
+   - Tampilkan konten yang sudah diedit
+
+═══════════════════════════════════════════════════════════════
+
+💾 STRUKTUR DATA localStorage:
+
+{
+  "adminAuthData": {
+    "username": "***",
+    "password": "***",
+    "createdAt": "2026-04-19T10:00:00.000Z"
+  },
+  
+  "isAdminAuthenticated": "true",
+  
+  "currentAdminUser": {
+    "username": "***",
+    "loginTime": "2026-04-19T10:30:00.000Z"
+  },
+  
+  "landingPageData": {
+    "hero": {
+      "title": "Halo, Saya M. Ihwal Maulana",
+      "subtitle": "Mahasiswa Teknik Informatika",
+      "description": "Selamat datang...",
+      "image": "https://i.ibb.co.com/..."
+    },
+    "social": {
+      "linkedin": "https://linkedin.com/in/...",
+      "github": "https://github.com/...",
+      "instagram": "https://instagram.com/..."
+    },
+    "updatedAt": "2026-04-19T10:30:00.000Z"
+  }
+}
+
+═══════════════════════════════════════════════════════════════
+
+🎨 CUSTOMIZATION:
+
+Ubah Credentials:
+→ Edit di script.js bagian ADMIN_CONFIG:
+  DEFAULT_USERNAME: '***'  // Ubah username
+  DEFAULT_PASSWORD: '***'  // Ubah password
+
+Ubah Warna:
+→ Edit di style.css bagian :root:
+  --primary: #E53E3E;    // Warna utama
+  --secondary: #C53030;  // Warna sekunder
+
+═══════════════════════════════════════════════════════════════
+
+🐛 TROUBLESHOOTING:
+
+❌ Tidak bisa login?
+   → Buka console (F12), jalankan:
+     localStorage.clear()
+   → Refresh page, coba login lagi
+
+❌ Data hilang setelah refresh?
+   → Cek localStorage di DevTools (F12 → Application)
+   → Pastikan data tersimpan
+
+❌ Dashboard tidak load?
+   → Pastikan sudah login
+   → Cek console untuk error
+
+❌ Link admin tidak berubah?
+   → Refresh page
+   → Clear cache browser
+
+═══════════════════════════════════════════════════════════════
+
+✅ TESTING CHECKLIST:
+
+□ Bisa buka login.html
+□ Bisa login dengan credentials admin
+□ Redirect ke dashboard.html setelah login
+□ Bisa lihat statistik di dashboard
+□ Bisa edit landing page
+□ Bisa simpan perubahan
+□ Perubahan muncul di index.html
+□ Data tetap ada setelah refresh
+□ Link admin berubah jadi "Dashboard" setelah login
+□ Bisa logout
+□ Redirect ke login.html setelah logout
+□ Tidak bisa akses dashboard.html tanpa login
+
+═══════════════════════════════════════════════════════════════
+
+📱 RESPONSIVE:
+✅ Desktop, Tablet, Mobile
+
+🔒 SECURITY:
+⚠️ Ini sistem sederhana untuk demo/development
+⚠️ Untuk production, gunakan backend API dengan enkripsi
+
+═══════════════════════════════════════════════════════════════
+
+🎉 SELESAI!
+
+Website kamu sekarang punya:
+✅ Sistem login terpisah
+✅ Dashboard admin
+✅ Edit landing page dari dashboard
+✅ Proteksi halaman
+✅ Data persistent dengan localStorage
+✅ UI/UX modern & responsive
+
+Happy Coding! 🚀

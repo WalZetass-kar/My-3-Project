@@ -28,11 +28,14 @@
                 <a href="index.html">Ihwal Maulana</a>
             </div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="index.html" class="nav-link active">Home</a></li>
                 <li><a href="digitalcv.html" class="nav-link">Digital CV</a></li>
                 <li><a href="portofolio.html" class="nav-link">Portfolio</a></li>
                 <li><a href="sertifikat.html" class="nav-link">Sertifikat</a></li>
                 <li><a href="quickmath.html" class="nav-link">QuickMath</a></li>
+                <li><a href="login.html" class="nav-link nav-link-admin" id="adminNavLink">
+                    <i class="fas fa-lock"></i> Admin
+                </a></li>
             </ul>
             <div class="nav-toggle" id="navToggle">
                 <i class="fas fa-bars"></i>
@@ -44,9 +47,9 @@
         <div class="container">
             <div class="dashboard-content">
                 <div class="dashboard-text">
-                    <h1 class="dashboard-title">Halo, Saya <span class="gradient-text">M. Ihwal Maulana</span></h1>
-                    <p class="dashboard-subtitle">Mahasiswa Teknik Informatika & Cisco Networking Academy Student</p>
-                    <p class="dashboard-description">Selamat datang di personal website saya. Jelajahi Digital CV, Portfolio, Sertifikat, dan coba kemampuan hitung cepat Anda melalui game QuickMath!</p>
+                    <h1 class="dashboard-title" id="heroTitle">Halo, Saya <span class="gradient-text">M. Ihwal Maulana</span></h1>
+                    <p class="dashboard-subtitle" id="heroSubtitle">Mahasiswa Teknik Informatika & Cisco Networking Academy Student</p>
+                    <p class="dashboard-description" id="heroDescription">Selamat datang di personal website saya. Jelajahi Digital CV, Portfolio, Sertifikat, dan coba kemampuan hitung cepat Anda melalui game QuickMath!</p>
                     
                     <div class="dashboard-stats">
                         <div class="stat-card">
@@ -89,7 +92,7 @@
                 
                 <div class="dashboard-image">
                     <div class="image-wrapper">
-                        <img src="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg" alt="Profile Photo">
+                        <img id="heroImage" src="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg" alt="Profile Photo">
                     </div>
                 </div>
             </div>
@@ -100,9 +103,9 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-social">
-                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/waldevelop-afk" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://instagram.com/ihwalmaulana08" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank" id="linkedinLink"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank" id="githubLink"><i class="fab fa-github"></i></a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank" id="instagramLink"><i class="fab fa-instagram"></i></a>
                 </div>
                 <p class="footer-text">&copy; 2026 M. Ihwal Maulana </p>
             </div>
@@ -110,5 +113,52 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Load landing page data dari localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLandingPageContent();
+            updateAdminNavLink();
+        });
+
+        function loadLandingPageContent() {
+            const data = JSON.parse(localStorage.getItem('landingPageData') || '{}');
+            
+            if (data.hero) {
+                if (data.hero.title) {
+                    document.getElementById('heroTitle').innerHTML = data.hero.title;
+                }
+                if (data.hero.subtitle) {
+                    document.getElementById('heroSubtitle').textContent = data.hero.subtitle;
+                }
+                if (data.hero.description) {
+                    document.getElementById('heroDescription').textContent = data.hero.description;
+                }
+                if (data.hero.image) {
+                    document.getElementById('heroImage').src = data.hero.image;
+                }
+            }
+
+            if (data.social) {
+                if (data.social.linkedin) {
+                    document.getElementById('linkedinLink').href = data.social.linkedin;
+                }
+                if (data.social.github) {
+                    document.getElementById('githubLink').href = data.social.github;
+                }
+                if (data.social.instagram) {
+                    document.getElementById('instagramLink').href = data.social.instagram;
+                }
+            }
+        }
+
+        function updateAdminNavLink() {
+            const adminLink = document.getElementById('adminNavLink');
+            if (isAdminAuthenticated()) {
+                adminLink.href = 'dashboard.html';
+                adminLink.innerHTML = '<i class="fas fa-user-shield"></i> Dashboard';
+                adminLink.classList.add('admin-logged-in');
+            }
+        }
+    </script>
 </body>
 </html>

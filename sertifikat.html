@@ -28,11 +28,14 @@
                 <a href="index.html">Ihwal Maulana</a>
             </div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html" class="nav-link">Dashboard</a></li>
+                <li><a href="index.html" class="nav-link">Home</a></li>
                 <li><a href="digitalcv.html" class="nav-link">Digital CV</a></li>
                 <li><a href="portofolio.html" class="nav-link">Portfolio</a></li>
                 <li><a href="sertifikat.html" class="nav-link active">Sertifikat</a></li>
                 <li><a href="quickmath.html" class="nav-link">QuickMath</a></li>
+                <li><a href="login.html" class="nav-link nav-link-admin" id="adminNavLink">
+                    <i class="fas fa-lock"></i> Admin
+                </a></li>
             </ul>
             <div class="nav-toggle" id="navToggle">
                 <i class="fas fa-bars"></i>
@@ -214,5 +217,16 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Update admin nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminLink = document.getElementById('adminNavLink');
+            if (isAdminAuthenticated()) {
+                adminLink.href = 'dashboard.html';
+                adminLink.innerHTML = '<i class="fas fa-user-shield"></i> Dashboard';
+                adminLink.classList.add('admin-logged-in');
+            }
+        });
+    </script>
 </body>
 </html>
