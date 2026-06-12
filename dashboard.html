@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard admin untuk mengelola konten website Ihwal Maulana.">
+    <meta name="robots" content="noindex, nofollow">
     <title>Dashboard Admin - Ihwal Maulana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,9 +16,9 @@
 </head>
 <body class="light-mode dashboard-page">
 
-    <button class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <i class="fas fa-moon" aria-hidden="true"></i>
+        <i class="fas fa-sun" aria-hidden="true"></i>
     </button>
 
     <div id="toastContainer" class="toast-container"></div>
@@ -25,8 +30,8 @@
                 <img src="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg" alt="Logo">
                 <span>Admin Panel</span>
             </div>
-            <button class="sidebar-close" onclick="toggleDashboardSidebar()">
-                <i class="fas fa-times"></i>
+            <button class="sidebar-close" onclick="toggleDashboardSidebar()" aria-label="Close sidebar">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
 
@@ -326,11 +331,15 @@
                 document.getElementById('dashboardPageTitle').textContent = 'Edit Landing Page';
             }
 
-            // Update sidebar active state
+            // Update sidebar active state safely
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.classList.remove('active');
             });
-            event.target.closest('.sidebar-link').classList.add('active');
+            var sectionMap = { 'home': 0, 'landing': 1 };
+            var sidebarLinks = document.querySelectorAll('.sidebar-link');
+            if (sectionMap[section] !== undefined && sidebarLinks[sectionMap[section]]) {
+                sidebarLinks[sectionMap[section]].classList.add('active');
+            }
 
             // Close sidebar on mobile
             if (window.innerWidth <= 768) {
@@ -344,7 +353,12 @@
 
         // Landing Page Form
         function loadLandingPageData() {
-            const data = JSON.parse(localStorage.getItem('landingPageData') || '{}');
+            var data;
+            try {
+                data = JSON.parse(localStorage.getItem('landingPageData') || '{}');
+            } catch (e) {
+                data = {};
+            }
             
             if (data.hero) {
                 document.getElementById('heroTitle').value = data.hero.title || '';

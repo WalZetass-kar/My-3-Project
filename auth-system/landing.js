@@ -250,17 +250,35 @@ document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
 });
 
+// ===== MOBILE NAV TOGGLE =====
+(function() {
+    var navToggle = document.getElementById('authNavToggle');
+    var navMenu = document.getElementById('authNavMenu');
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            var icon = navToggle.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        // Close menu when a link is clicked
+        navMenu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                navMenu.classList.remove('active');
+                var icon = navToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+    }
+})();
+
 // ===== CONSOLE INFO =====
-console.log(`
-╔════════════════════════════════════════╗
-║  Landing Page System Ready 🌐          ║
-╚════════════════════════════════════════╝
-
-📚 Features:
-- Dynamic content from localStorage
-- Smooth animations
-- Responsive design
-- Admin quick access (if logged in)
-
-💾 Data loaded from: landingPageData
-`);
+console.log('Landing Page System Ready');

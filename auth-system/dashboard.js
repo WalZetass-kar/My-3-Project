@@ -447,16 +447,4 @@ function clearAllData() {
 }
 
 // ===== CONSOLE INFO =====
-console.log(`
-╔════════════════════════════════════════╗
-║  Dashboard System Ready 📊             ║
-╚════════════════════════════════════════╝
-
-📚 Available Functions:
-- loadLandingData()       : Load data ke form
-- saveLandingData(data)   : Save data ke localStorage
-- exportData()            : Export data ke JSON
-- clearAllData()          : Reset ke default
-
-💾 Storage Key: ${DASHBOARD_CONFIG.LANDING_DATA_KEY}
-`);
+console.log('Dashboard System Ready');

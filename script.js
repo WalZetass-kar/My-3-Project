@@ -4,99 +4,189 @@ const ADMIN_CONFIG = {
     SESSION_KEY: 'isAdminAuthenticated',
     USER_KEY: 'currentAdminUser',
     REMEMBER_KEY: 'rememberedUsername',
-    DEFAULT_USERNAME: 'WalDevelop',
-    DEFAULT_PASSWORD: 'kartika'
+    SESSION_EXPIRY_MS: 8 * 60 * 60 * 1000,
+    HASHED_CREDENTIALS: '67446728',
+    MAX_LOGIN_ATTEMPTS: 5,
+    LOCKOUT_MS: 5 * 60 * 1000,
+    LOGIN_ATTEMPTS_KEY: 'loginAttempts',
+    LOCKOUT_KEY: 'loginLockout'
 };
 
-// Initialize admin credentials
-function initAdminAuth() {
-    const authData = localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY);
-    if (!authData) {
-        const defaultAuth = {
-            username: ADMIN_CONFIG.DEFAULT_USERNAME,
-            password: ADMIN_CONFIG.DEFAULT_PASSWORD,
-            createdAt: new Date().toISOString()
-        };
-        localStorage.setItem(ADMIN_CONFIG.STORAGE_KEY, JSON.stringify(defaultAuth));
+function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
     }
-}
-initAdminAuth();
-
-// Check if admin is authenticated
-function isAdminAuthenticated() {
-    return localStorage.getItem(ADMIN_CONFIG.SESSION_KEY) === 'true';
+    return Math.abs(hash).toString(16);
 }
 
-// Get current admin user
-function getCurrentAdminUser() {
+function getLoginAttempts() {
     try {
-        const user = localStorage.getItem(ADMIN_CONFIG.USER_KEY);
-        return user ? JSON.parse(user) : null;
-    } catch (error) {
+        return parseInt(localStorage.getItem(ADMIN_CONFIG.LOGIN_ATTEMPTS_KEY) || '0', 10);
+    } catch (e) { return 0; }
+}
+
+function resetLoginAttempts() {
+    localStorage.removeItem(ADMIN_CONFIG.LOGIN_ATTEMPTS_KEY);
+    localStorage.removeItem(ADMIN_CONFIG.LOCKOUT_KEY);
+}
+
+function isLockedOut() {
+    try {
+        const lockoutUntil = localStorage.getItem(ADMIN_CONFIG.LOCKOUT_KEY);
+        if (lockoutUntil && Date.now() < parseInt(lockoutUntil, 10)) return true;
+        if (lockoutUntil && Date.now() >= parseInt(lockoutUntil, 10)) resetLoginAttempts();
+        return false;
+    } catch (e) { return false; }
+}
+
+function recordFailedAttempt() {
+    const attempts = getLoginAttempts() + 1;
+    localStorage.setItem(ADMIN_CONFIG.LOGIN_ATTEMPTS_KEY, attempts.toString());
+    if (attempts >= ADMIN_CONFIG.MAX_LOGIN_ATTEMPTS) {
+        localStorage.setItem(ADMIN_CONFIG.LOCKOUT_KEY, (Date.now() + ADMIN_CONFIG.LOCKOUT_MS).toString());
+    }
+    return attempts;
+}
+
+function safeGetItem(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (e) {
+        console.warn('localStorage read error:', e);
         return null;
     }
 }
 
-// Handle admin login
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch (e) {
+        console.warn('localStorage write error:', e);
+        return false;
+    }
+}
+
+function safeJSONParse(str, fallback) {
+    try {
+        return JSON.parse(str);
+    } catch (e) {
+        return fallback;
+    }
+}
+
+// Initialize admin credentials (hash-based, no plaintext)
+function initAdminAuth() {
+    const authData = safeGetItem(ADMIN_CONFIG.STORAGE_KEY);
+    if (!authData) {
+        const defaultAuth = {
+            credentialHash: ADMIN_CONFIG.HASHED_CREDENTIALS,
+            createdAt: new Date().toISOString()
+        };
+        safeSetItem(ADMIN_CONFIG.STORAGE_KEY, JSON.stringify(defaultAuth));
+    }
+}
+initAdminAuth();
+
+// Check if admin is authenticated (with session expiry)
+function isAdminAuthenticated() {
+    const isAuth = safeGetItem(ADMIN_CONFIG.SESSION_KEY) === 'true';
+    if (!isAuth) return false;
+
+    const user = safeJSONParse(safeGetItem(ADMIN_CONFIG.USER_KEY), null);
+    if (user && user.loginTime) {
+        const elapsed = Date.now() - new Date(user.loginTime).getTime();
+        if (elapsed > ADMIN_CONFIG.SESSION_EXPIRY_MS) {
+            handleAdminLogout(true);
+            return false;
+        }
+    }
+    return true;
+}
+
+// Get current admin user
+function getCurrentAdminUser() {
+    return safeJSONParse(safeGetItem(ADMIN_CONFIG.USER_KEY), null);
+}
+
+// Handle admin login with rate limiting and hash-based auth
 function handleAdminLogin(event) {
     event.preventDefault();
-    
+
+    if (isLockedOut()) {
+        showLoginMessage('Terlalu banyak percobaan gagal. Coba lagi dalam 5 menit.', 'error');
+        return;
+    }
+
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     const rememberMe = document.getElementById('rememberMe').checked;
     const btnLogin = document.getElementById('btnLogin');
     const messageEl = document.getElementById('loginMessage');
-    
+
     if (!username || !password) {
         showLoginMessage('Username dan password harus diisi!', 'error');
         return;
     }
-    
+
     // Show loading
     btnLogin.disabled = true;
     btnLogin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-    
+
     setTimeout(() => {
-        const authData = JSON.parse(localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY));
-        
-        if (username === authData.username && password === authData.password) {
+        // Verify credentials via hash comparison
+        const combinedInput = username + ':' + password;
+        const inputHash = simpleHash(combinedInput);
+
+        if (inputHash === ADMIN_CONFIG.HASHED_CREDENTIALS) {
             // Login success
             const userData = {
                 username: username,
                 loginTime: new Date().toISOString()
             };
-            
-            localStorage.setItem(ADMIN_CONFIG.SESSION_KEY, 'true');
-            localStorage.setItem(ADMIN_CONFIG.USER_KEY, JSON.stringify(userData));
-            
+
+            safeSetItem(ADMIN_CONFIG.SESSION_KEY, 'true');
+            safeSetItem(ADMIN_CONFIG.USER_KEY, JSON.stringify(userData));
+
             if (rememberMe) {
-                localStorage.setItem(ADMIN_CONFIG.REMEMBER_KEY, username);
+                safeSetItem(ADMIN_CONFIG.REMEMBER_KEY, username);
             } else {
                 localStorage.removeItem(ADMIN_CONFIG.REMEMBER_KEY);
             }
-            
+
+            resetLoginAttempts();
             showLoginMessage('Login berhasil! Mengalihkan...', 'success');
-            
+
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 1000);
-            
+
         } else {
             // Login failed
-            showLoginMessage('Username atau password salah!', 'error');
+            const attempts = recordFailedAttempt();
+            const remaining = ADMIN_CONFIG.MAX_LOGIN_ATTEMPTS - attempts;
+            const msg = remaining > 0
+                ? `Username atau password salah! (${remaining} percobaan tersisa)`
+                : 'Terlalu banyak percobaan gagal. Akun dikunci selama 5 menit.';
+            showLoginMessage(msg, 'error');
             btnLogin.disabled = false;
             btnLogin.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
-            
+
             const form = document.getElementById('loginForm');
-            form.classList.add('shake');
-            setTimeout(() => form.classList.remove('shake'), 500);
+            if (form) {
+                form.classList.add('shake');
+                setTimeout(() => form.classList.remove('shake'), 500);
+            }
         }
     }, 800);
 }
 
-// Handle admin logout
-function handleAdminLogout() {
-    if (confirm('Yakin ingin logout?')) {
+// Handle admin logout (silent=true skips confirm, used by session expiry)
+function handleAdminLogout(silent) {
+    if (silent || confirm('Yakin ingin logout?')) {
         localStorage.removeItem(ADMIN_CONFIG.SESSION_KEY);
         localStorage.removeItem(ADMIN_CONFIG.USER_KEY);
         window.location.href = 'login.html';
@@ -154,10 +244,11 @@ function setActiveNavLink() {
 function initThemeToggle() {
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
-    
+
     const savedTheme = localStorage.getItem('theme') || 'light-mode';
-    body.className = savedTheme;
-    
+    body.classList.remove('light-mode', 'dark-mode');
+    body.classList.add(savedTheme);
+
     themeToggle.addEventListener('click', function() {
         if (body.classList.contains('light-mode')) {
             body.classList.remove('light-mode');
@@ -192,15 +283,23 @@ function initNavigation() {
 
 function initBackToTop() {
     const backToTop = document.getElementById('backToTop');
-    
+    if (!backToTop) return;
+
+    let scrollTicking = false;
     window.addEventListener('scroll', function() {
-        if (window.scrollY > 300) {
-            backToTop.classList.add('visible');
-        } else {
-            backToTop.classList.remove('visible');
+        if (!scrollTicking) {
+            window.requestAnimationFrame(function() {
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+                scrollTicking = false;
+            });
+            scrollTicking = true;
         }
     });
-    
+
     backToTop.addEventListener('click', function() {
         window.scrollTo({
             top: 0,
@@ -258,8 +357,6 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-const ADMIN_USERNAME = "WalDevelop";
-const ADMIN_PASSWORD = "kartika";
 let isLoggedIn = false;
 let currentCert = null;
 let currentCertCategory = 'cisco';
@@ -328,16 +425,16 @@ function initCertificateFileInputs() {
 }
 
 function loadCertLinks() {
-    const saved = localStorage.getItem('certLinks');
+    const saved = safeGetItem('certLinks');
     if (saved) {
-        certLinks = JSON.parse(saved);
+        certLinks = safeJSONParse(saved, certLinks);
     }
     updateCertCategorySelect();
     filterCertificates('cisco');
 }
 
 function saveCertLinks() {
-    localStorage.setItem('certLinks', JSON.stringify(certLinks));
+    safeSetItem('certLinks', JSON.stringify(certLinks));
 }
 
 function checkLoginStatus() {
@@ -373,11 +470,11 @@ window.handleLogin = function() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const errorElement = document.getElementById('loginError');
-    
-    // Gunakan auth system yang sama
-    const authData = JSON.parse(localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY));
-    
-    if (username === authData.username && password === authData.password) {
+
+    // Use hash-based auth
+    const inputHash = simpleHash(username + ':' + password);
+
+    if (inputHash === ADMIN_CONFIG.HASHED_CREDENTIALS) {
         isLoggedIn = true;
         localStorage.setItem('adminLoggedIn', 'true');
         closeLoginModal();
@@ -440,17 +537,7 @@ function initCertCategorySelect() {
 function updateCertCategorySelect() {
     const categorySelect = document.getElementById('certCategory');
     if (!categorySelect) return;
-    
-    const category = categorySelect.value;
-    const certSelect = document.getElementById('certSelect');
-    if (!certSelect) return;
-    
-    let options = '';
-    const certs = certLinks[category];
-    for (let key in certs) {
-        options += `<option value="${key}">${certs[key].name}</option>`;
-    }
-    certSelect.innerHTML = options;
+    // certSelect removed — editing is tracked via window._editingCert
 }
 
 function initCertificateCategories() {
@@ -510,6 +597,11 @@ function renderCertificates() {
         if (currentCertCategory === 'komdigi') iconClass = 'fa-building';
         if (currentCertCategory === 'bisaai') iconClass = 'fa-robot';
         
+        const certYear = cert.date ? new Date(cert.date).getFullYear() : '2026';
+        const certIssuerText = cert.issuer ||
+            (currentCertCategory === 'cisco' ? 'Cisco Networking Academy' :
+             currentCertCategory === 'komdigi' ? 'Kementerian Komdigi' : 'Bisa AI Academy');
+
         html += `
             <div class="certificate-card" id="cert-${currentCertCategory}-${key}">
                 ${adminActions}
@@ -518,8 +610,8 @@ function renderCertificates() {
                 </div>
                 <div class="certificate-content">
                     <h3>${cert.name}</h3>
-                    <p class="cert-issuer">${currentCertCategory === 'cisco' ? 'Cisco Networking Academy' : currentCertCategory === 'komdigi' ? 'Kementerian Komdigi' : 'Bisa AI Academy'}</p>
-                    <span class="cert-year">2026</span>
+                    <p class="cert-issuer">${certIssuerText}</p>
+                    <span class="cert-year">${certYear}</span>
                     <div class="cert-actions">
                         <button class="btn-view-cert" onclick="viewCertificate('${currentCertCategory}', '${key}')">
                             <i class="fas fa-eye"></i> Lihat Sertifikat
@@ -621,49 +713,51 @@ window.editCertificate = function(category, key) {
         openLoginModal();
         return;
     }
-    
-    document.getElementById('certCategory').value = category;
-    updateCertCategorySelect();
-    
-    setTimeout(() => {
-        document.getElementById('certSelect').value = key;
-    }, 100);
-    
+
     const cert = certLinks[category][key];
-    const preview = document.getElementById('certBadgePreview');
-    
+    if (!cert) return;
+
+    // Store editing target
+    window._editingCert = { category, key };
+
+    // Set category dropdown
+    document.getElementById('certCategory').value = category;
+
+    // Populate form fields
+    document.getElementById('certTitle').value = cert.name || '';
+    document.getElementById('certIssuer').value =
+        category === 'cisco' ? 'Cisco Networking Academy' :
+        category === 'komdigi' ? 'Kementerian Komdigi' : 'Bisa AI Academy';
+    document.getElementById('certHours').value = cert.hours || '';
+    document.getElementById('certDescription').value = cert.description || '';
+
+    // Set link field (only if it's a URL, not Base64)
+    const certLink = document.getElementById('certLink');
+    if (cert.link && !cert.link.startsWith('data:')) {
+        certLink.value = cert.link;
+    } else {
+        certLink.value = '';
+    }
+
     // Clear file inputs
     const certFile = document.getElementById('certFile');
     const badgeFile = document.getElementById('badgeFile');
     if (certFile) certFile.value = '';
     if (badgeFile) badgeFile.value = '';
-    
-    // Set URL fields (if link/badge are URLs, not Base64)
-    if (cert.link && !cert.link.startsWith('data:')) {
-        document.getElementById('certLink').value = cert.link;
-    } else {
-        document.getElementById('certLink').value = '';
+
+    // Show badge preview if exists
+    const preview = document.getElementById('certBadgePreview');
+    if (cert.badge && preview) {
+        preview.innerHTML = `<img src="${cert.badge}" alt="Preview" class="image-preview" style="max-width: 200px; border-radius: 5px;">`;
+    } else if (preview) {
+        preview.innerHTML = '';
     }
-    
-    if (cert.badge) {
-        if (cert.badge.startsWith('data:')) {
-            // It's a Base64 image
-            if (preview) {
-                preview.innerHTML = `<img src="${cert.badge}" alt="Preview" class="image-preview" style="max-width: 200px; border-radius: 5px;">`;
-            }
-        } else {
-            // It's a URL
-            document.getElementById('certImage').value = cert.badge;
-            if (preview) {
-                preview.innerHTML = `<img src="${cert.badge}" alt="Preview" class="image-preview" style="max-width: 200px; border-radius: 5px;">`;
-            }
-        }
-    } else {
-        document.getElementById('certImage').value = '';
-        if (preview) preview.innerHTML = '';
-    }
-    
+
+    const filePreview = document.getElementById('certFilePreview');
+    if (filePreview) filePreview.innerHTML = '';
+
     showAdminPanel();
+    showToast('Mode edit aktif: ' + cert.name, 'info');
 }
 
 window.handleCertFileUpload = function(file) {
@@ -714,21 +808,28 @@ window.saveCertificateLink = function() {
         openLoginModal();
         return;
     }
-    
+
     const category = document.getElementById('certCategory').value;
-    const certSelect = document.getElementById('certSelect');
-    const certLink = document.getElementById('certLink');
+    const certTitle = document.getElementById('certTitle').value.trim();
+    const certIssuer = document.getElementById('certIssuer').value.trim();
+    const certDate = document.getElementById('certDate').value;
+    const certDescription = document.getElementById('certDescription').value.trim();
+    const certHours = parseInt(document.getElementById('certHours').value, 10) || 0;
+    const certLink = document.getElementById('certLink').value.trim();
     const certFile = document.getElementById('certFile');
-    const certImage = document.getElementById('certImage');
     const badgeFile = document.getElementById('badgeFile');
-    
-    const selectedCert = certSelect.value;
-    let linkValue = certLink.value.trim();
-    let imageValue = certImage.value.trim();
-    
+
+    if (!certTitle) {
+        showToast('Judul sertifikat harus diisi!', 'error');
+        return;
+    }
+
+    let linkValue = certLink;
+    let badgeValue = '';
+
     // Handle file uploads
     const promises = [];
-    
+
     if (certFile && certFile.files.length > 0) {
         promises.push(
             window.handleCertFileUpload(certFile.files[0]).then(base64 => {
@@ -736,37 +837,59 @@ window.saveCertificateLink = function() {
             })
         );
     }
-    
+
     if (badgeFile && badgeFile.files.length > 0) {
         promises.push(
             window.handleBadgeFileUpload(badgeFile.files[0]).then(base64 => {
-                imageValue = base64;
+                badgeValue = base64;
             })
         );
     }
-    
-    // Wait for all file uploads to complete
+
     Promise.all(promises).then(() => {
-        if (selectedCert && certLinks[category] && certLinks[category][selectedCert]) {
-            if (linkValue) {
-                certLinks[category][selectedCert].link = linkValue;
-            }
-            if (imageValue) {
-                certLinks[category][selectedCert].badge = imageValue;
-            }
-            saveCertLinks();
-            
-            if (currentCertCategory === category) {
-                renderCertificates();
-            }
-            
-            certLink.value = '';
-            certFile.value = '';
-            certImage.value = '';
-            badgeFile.value = '';
-            document.getElementById('certBadgePreview').innerHTML = '';
-            showToast('Sertifikat berhasil disimpan!', 'success');
+        // Determine the cert key to update
+        let certKey;
+        if (window._editingCert && window._editingCert.category === category) {
+            certKey = window._editingCert.key;
+        } else {
+            // Adding new: generate key from title
+            certKey = certTitle.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 20) || ('cert_' + Date.now());
         }
+
+        if (!certLinks[category]) certLinks[category] = {};
+
+        certLinks[category][certKey] = {
+            name: certTitle,
+            issuer: certIssuer,
+            date: certDate,
+            description: certDescription,
+            hours: certHours,
+            link: linkValue || certLinks[category][certKey]?.link || '',
+            badge: badgeValue || certLinks[category][certKey]?.badge || ''
+        };
+
+        saveCertLinks();
+
+        if (currentCertCategory === category || currentCertCategory === 'all') {
+            renderCertificates();
+        }
+
+        // Clear form
+        document.getElementById('certTitle').value = '';
+        document.getElementById('certIssuer').value = '';
+        document.getElementById('certDate').value = '';
+        document.getElementById('certDescription').value = '';
+        document.getElementById('certHours').value = '';
+        document.getElementById('certLink').value = '';
+        if (certFile) certFile.value = '';
+        if (badgeFile) badgeFile.value = '';
+        const badgePreview = document.getElementById('certBadgePreview');
+        if (badgePreview) badgePreview.innerHTML = '';
+        const filePreview = document.getElementById('certFilePreview');
+        if (filePreview) filePreview.innerHTML = '';
+
+        window._editingCert = null;
+        showToast('Sertifikat berhasil disimpan!', 'success');
     }).catch(() => {
         showToast('Gagal menyimpan sertifikat!', 'error');
     });
@@ -795,27 +918,27 @@ window.previewBadgeImage = function(url) {
     }
 }
 
-window.onclick = function(event) {
+window.addEventListener('click', function(event) {
     const certModal = document.getElementById('certModal');
     if (certModal && event.target === certModal) {
         closeModal();
     }
-    
+
     const confirmModal = document.getElementById('confirmModal');
     if (confirmModal && event.target === confirmModal) {
         closeConfirmModal();
     }
-    
+
     const loginModal = document.getElementById('loginModal');
     if (loginModal && event.target === loginModal) {
         closeLoginModal();
     }
-    
+
     const portfolioLoginModal = document.getElementById('portfolioLoginModal');
     if (portfolioLoginModal && event.target === portfolioLoginModal) {
         closePortfolioLoginModal();
     }
-}
+});
 
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
@@ -826,8 +949,6 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-const PORTFOLIO_ADMIN_USERNAME = "WalDevelop";
-const PORTFOLIO_ADMIN_PASSWORD = "kartika";
 let isPortfolioLoggedIn = false;
 let portfolioItems = [];
 let currentPage = 1;
@@ -845,9 +966,10 @@ function initPortfolio() {
 }
 
 function loadPortfolioItems() {
-    const saved = localStorage.getItem('portfolioItems');
+    const saved = safeGetItem('portfolioItems');
     if (saved) {
-        portfolioItems = JSON.parse(saved);
+        portfolioItems = safeJSONParse(saved, []);
+        if (!Array.isArray(portfolioItems)) portfolioItems = [];
     } else {
         portfolioItems = [
             {
@@ -902,7 +1024,7 @@ function loadPortfolioItems() {
 }
 
 function savePortfolioItems() {
-    localStorage.setItem('portfolioItems', JSON.stringify(portfolioItems));
+    safeSetItem('portfolioItems', JSON.stringify(portfolioItems));
 }
 
 function filterAndSortItems() {
@@ -1108,11 +1230,11 @@ window.handlePortfolioLogin = function() {
     const username = document.getElementById('portfolioUsername').value;
     const password = document.getElementById('portfolioPassword').value;
     const errorElement = document.getElementById('portfolioLoginError');
-    
-    // Gunakan auth system yang sama
-    const authData = JSON.parse(localStorage.getItem(ADMIN_CONFIG.STORAGE_KEY));
-    
-    if (username === authData.username && password === authData.password) {
+
+    // Use hash-based auth
+    const inputHash = simpleHash(username + ':' + password);
+
+    if (inputHash === ADMIN_CONFIG.HASHED_CREDENTIALS) {
         isPortfolioLoggedIn = true;
         localStorage.setItem('portfolioAdminLoggedIn', 'true');
         closePortfolioLoginModal();
@@ -1419,29 +1541,40 @@ function initGame() {
         playScreen.classList.add("hidden");
         resultScreen.classList.add("hidden");
         loadingScreen.classList.remove("hidden");
-        
+
         if (loadingPlayerName) {
             loadingPlayerName.innerText = "👤 " + playerName;
         }
-        
+
         const startButton = document.getElementById("startButton");
         if (startButton) startButton.disabled = true;
-        
+
         let percentage = 0;
+        let loadingDone = false;
+
+        function finishLoading() {
+            if (loadingDone) return;
+            loadingDone = true;
+            clearInterval(interval);
+            if (loadingPercentage) loadingPercentage.innerText = "100%";
+            setTimeout(() => {
+                loadingScreen.classList.add("hidden");
+                startGame();
+                if (startButton) startButton.disabled = false;
+            }, 300);
+        }
+
+        // Allow skipping loading by clicking
+        loadingScreen.addEventListener('click', finishLoading, { once: true });
+
         const interval = setInterval(() => {
-            percentage += Math.random() * 15;
+            percentage += Math.random() * 25;
             if (percentage >= 100) {
                 percentage = 100;
-                clearInterval(interval);
-                
-                setTimeout(() => {
-                    loadingScreen.classList.add("hidden");
-                    startGame();
-                    if (startButton) startButton.disabled = false;
-                }, 500);
+                finishLoading();
             }
-            
-            if (loadingPercentage) {
+
+            if (loadingPercentage && !loadingDone) {
                 loadingPercentage.innerText = Math.floor(percentage) + "%";
             }
         }, 200);

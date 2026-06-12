@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Website pribadi Ihwal Maulana - Mahasiswa Teknik Informatika, Digital CV, Portfolio, Sertifikat, dan game QuickMath.">
     <title>My Website - Ihwal Maulana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,38 +15,41 @@
 </head>
 <body class="light-mode">
 
-    <button class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
+    <a href="#dashboard" class="skip-to-content">Skip to content</a>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <i class="fas fa-moon" aria-hidden="true"></i>
+        <i class="fas fa-sun" aria-hidden="true"></i>
     </button>
 
-    <button class="back-to-top" id="backToTop">
-        <i class="fas fa-chevron-up"></i>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-chevron-up" aria-hidden="true"></i>
     </button>
 
-    <div id="toastContainer" class="toast-container"></div>
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-    <nav class="navbar">
+    <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-brand">
                 <a href="index.html">Ihwal Maulana</a>
             </div>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html" class="nav-link active">Home</a></li>
-                <li><a href="digitalcv.html" class="nav-link">Digital CV</a></li>
-                <li><a href="portofolio.html" class="nav-link">Portfolio</a></li>
-                <li><a href="sertifikat.html" class="nav-link">Sertifikat</a></li>
-                <li><a href="quickmath.html" class="nav-link">QuickMath</a></li>
-                <li><a href="login.html" class="nav-link nav-link-admin" id="adminNavLink">
-                    <i class="fas fa-lock"></i> Admin
+            <ul class="nav-menu" id="navMenu" role="menubar">
+                <li><a href="index.html" class="nav-link active" role="menuitem">Home</a></li>
+                <li><a href="digitalcv.html" class="nav-link" role="menuitem">Digital CV</a></li>
+                <li><a href="portofolio.html" class="nav-link" role="menuitem">Portfolio</a></li>
+                <li><a href="sertifikat.html" class="nav-link" role="menuitem">Sertifikat</a></li>
+                <li><a href="quickmath.html" class="nav-link" role="menuitem">QuickMath</a></li>
+                <li><a href="login.html" class="nav-link nav-link-admin" id="adminNavLink" role="menuitem">
+                    <i class="fas fa-lock" aria-hidden="true"></i> Admin
                 </a></li>
             </ul>
-            <div class="nav-toggle" id="navToggle">
-                <i class="fas fa-bars"></i>
+            <div class="nav-toggle" id="navToggle" role="button" aria-label="Toggle navigation menu" aria-expanded="false" tabindex="0">
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </div>
         </div>
     </nav>
 
+    <main>
     <section id="dashboard" class="section active-section">
         <div class="container">
             <div class="dashboard-content">
@@ -50,82 +57,87 @@
                     <h1 class="dashboard-title" id="heroTitle">Halo, Saya <span class="gradient-text">M. Ihwal Maulana</span></h1>
                     <p class="dashboard-subtitle" id="heroSubtitle">Mahasiswa Teknik Informatika & Cisco Networking Academy Student</p>
                     <p class="dashboard-description" id="heroDescription">Selamat datang di personal website saya. Jelajahi Digital CV, Portfolio, Sertifikat, dan coba kemampuan hitung cepat Anda melalui game QuickMath!</p>
-                    
+
                     <div class="dashboard-stats">
                         <div class="stat-card">
-                            <i class="fas fa-file-alt"></i>
+                            <i class="fas fa-file-alt" aria-hidden="true"></i>
                             <div class="stat-info">
                                 <h3>Digital CV</h3>
                                 <p>Lihat informasi pribadi, pendidikan, dan skill</p>
-                                <a href="digitalcv.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                                <a href="digitalcv.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                             </div>
                         </div>
-                        
+
                         <div class="stat-card">
-                            <i class="fas fa-images"></i>
+                            <i class="fas fa-images" aria-hidden="true"></i>
                             <div class="stat-info">
                                 <h3>Portfolio</h3>
                                 <p>Jelajahi proyek dan kegiatan</p>
-                                <a href="portofolio.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                                <a href="portofolio.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                             </div>
                         </div>
-                        
+
                         <div class="stat-card">
-                            <i class="fas fa-certificate"></i>
+                            <i class="fas fa-certificate" aria-hidden="true"></i>
                             <div class="stat-info">
                                 <h3>Sertifikat</h3>
                                 <p>Lihat sertifikat Cisco, Komdigi, dan Bisa AI</p>
-                                <a href="sertifikat.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                                <a href="sertifikat.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                             </div>
                         </div>
-                        
+
                         <div class="stat-card">
-                            <i class="fas fa-calculator"></i>
+                            <i class="fas fa-calculator" aria-hidden="true"></i>
                             <div class="stat-info">
                                 <h3>QuickMath</h3>
                                 <p>Uji kecepatan hitungmu</p>
-                                <a href="quickmath.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right"></i></a>
+                                <a href="quickmath.html" class="stat-link">Kunjungi <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="dashboard-image">
                     <div class="image-wrapper">
-                        <img id="heroImage" src="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg" alt="Profile Photo">
+                        <img id="heroImage" src="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg" alt="Foto Profil Ihwal Maulana" loading="eager">
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    </main>
 
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-social">
-                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank" id="linkedinLink"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/waldevelop-afk" target="_blank" id="githubLink"><i class="fab fa-github"></i></a>
-                    <a href="https://instagram.com/ihwalmaulana08" target="_blank" id="instagramLink"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank" rel="noopener noreferrer" id="linkedinLink" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank" rel="noopener noreferrer" id="githubLink" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank" rel="noopener noreferrer" id="instagramLink" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                 </div>
-                <p class="footer-text">&copy; 2026 M. Ihwal Maulana </p>
+                <p class="footer-text">&copy; 2026 M. Ihwal Maulana</p>
             </div>
         </div>
     </footer>
 
     <script src="script.js"></script>
     <script>
-        // Load landing page data dari localStorage
         document.addEventListener('DOMContentLoaded', function() {
             loadLandingPageContent();
             updateAdminNavLink();
         });
 
         function loadLandingPageContent() {
-            const data = JSON.parse(localStorage.getItem('landingPageData') || '{}');
-            
+            var data;
+            try {
+                data = JSON.parse(localStorage.getItem('landingPageData') || '{}');
+            } catch (e) {
+                data = {};
+            }
+
             if (data.hero) {
                 if (data.hero.title) {
-                    document.getElementById('heroTitle').innerHTML = data.hero.title;
+                    document.getElementById('heroTitle').textContent = data.hero.title;
                 }
                 if (data.hero.subtitle) {
                     document.getElementById('heroSubtitle').textContent = data.hero.subtitle;
@@ -152,7 +164,7 @@
         }
 
         function updateAdminNavLink() {
-            const adminLink = document.getElementById('adminNavLink');
+            var adminLink = document.getElementById('adminNavLink');
             if (isAdminAuthenticated()) {
                 adminLink.href = 'dashboard.html';
                 adminLink.innerHTML = '<i class="fas fa-user-shield"></i> Dashboard';

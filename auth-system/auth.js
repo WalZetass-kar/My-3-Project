@@ -260,19 +260,4 @@ function logActivity(action, details = '') {
 }
 
 // ===== CONSOLE INFO =====
-console.log(`
-╔════════════════════════════════════════╗
-║  Authentication System Ready 🔐        ║
-╚════════════════════════════════════════╝
-
-📚 Available Functions:
-- isAuthenticated()           : Cek status login
-- handleLogin(event)          : Proses login
-- handleLogout()              : Proses logout
-- changePassword(old, new)    : Ubah password
-- getCurrentUser()            : Get user info
-
-🔑 Default Credentials:
-Username: ${AUTH_CONFIG.DEFAULT_USERNAME}
-Password: ${AUTH_CONFIG.DEFAULT_PASSWORD}
-`);
+console.log('Authentication System Ready');

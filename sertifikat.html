@@ -3,49 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sertifikat Ihwal Maulana - Cisco Networking Academy, Komdigi, dan Bisa AI.">
     <title>Sertifikat - Ihwal Maulana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/bjjpS1Fv/Whats-App-Image-2026-02-08-at-10-19-23.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="light-mode">
- 
-    <button class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
+
+    <a href="#certificates" class="skip-to-content">Skip to content</a>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <i class="fas fa-moon" aria-hidden="true"></i>
+        <i class="fas fa-sun" aria-hidden="true"></i>
     </button>
 
-    <button class="back-to-top" id="backToTop">
-        <i class="fas fa-chevron-up"></i>
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-chevron-up" aria-hidden="true"></i>
     </button>
 
-    <div id="toastContainer" class="toast-container"></div>
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-    <nav class="navbar">
+    <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-brand">
                 <a href="index.html">Ihwal Maulana</a>
             </div>
-            <ul class="nav-menu" id="navMenu">
+            <ul class="nav-menu" id="navMenu" role="menubar">
                 <li><a href="index.html" class="nav-link">Home</a></li>
                 <li><a href="digitalcv.html" class="nav-link">Digital CV</a></li>
                 <li><a href="portofolio.html" class="nav-link">Portfolio</a></li>
                 <li><a href="sertifikat.html" class="nav-link active">Sertifikat</a></li>
                 <li><a href="quickmath.html" class="nav-link">QuickMath</a></li>
                 <li><a href="login.html" class="nav-link nav-link-admin" id="adminNavLink">
-                    <i class="fas fa-lock"></i> Admin
+                    <i class="fas fa-lock" aria-hidden="true"></i> Admin
                 </a></li>
             </ul>
-            <div class="nav-toggle" id="navToggle">
-                <i class="fas fa-bars"></i>
+            <div class="nav-toggle" id="navToggle" role="button" aria-label="Toggle navigation menu" aria-expanded="false" tabindex="0">
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </div>
         </div>
     </nav>
 
+    <main>
     <section id="certificates" class="section active-section">
         <div class="container">
-            <h2 class="section-title"><i class="fas fa-certificate"></i> Sertifikat</h2>
+            <h2 class="section-title"><i class="fas fa-certificate" aria-hidden="true"></i> Sertifikat</h2>
 
             <div id="loginModal" class="modal" style="display: none;">
                 <div class="modal-content" style="max-width: 400px;">
@@ -187,8 +194,9 @@
             </div>
         </div>
     </section>
+    </main>
 
-    <div id="certModal" class="modal">
+    <div id="certModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">Sertifikat</h3>
@@ -207,11 +215,11 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-social">
-                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/waldevelop-afk" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://instagram.com/ihwalmaulana08" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com/in/ihwalmaulana" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+                    <a href="https://github.com/waldevelop-afk" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+                    <a href="https://instagram.com/ihwalmaulana08" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                 </div>
-                <p class="footer-text">&copy; 2026 M. Ihwal Maulana - Sertifikat</p>
+                <p class="footer-text">&copy; 2026 M. Ihwal Maulana</p>
             </div>
         </div>
     </footer>
